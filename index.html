@@ -1,0 +1,3543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Examen de Ascenso - Educación Primaria | MINEDU Perú</title>
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --primary-dark: #1557b0;
+      --primary-light: #e8f0fe;
+      --secondary: #0d47a1;
+      --success: #1e8e3e;
+      --success-light: #e6f4ea;
+      --danger: #d93025;
+      --danger-light: #fce8e6;
+      --warning: #f9ab00;
+      --warning-light: #fef7e0;
+      --info: #0288d1;
+      --info-light: #e1f5fe;
+      --text-main: #202124;
+      --text-muted: #5f6368;
+      --bg-page: #f8f9fa;
+      --bg-card: #ffffff;
+      --border: #dadce0;
+      --border-focus: #1a73e8;
+      --shadow-sm: 0 1px 3px rgba(60,64,67,0.15);
+      --shadow-md: 0 4px 12px rgba(60,64,67,0.12);
+      --shadow-lg: 0 8px 24px rgba(60,64,67,0.16);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Government / MINEDU Header Banner */
+    .top-minedu-banner {
+      background: linear-gradient(90deg, #b71c1c 0%, #d32f2f 50%, #b71c1c 100%);
+      color: #ffffff;
+      padding: 8px 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .top-minedu-banner .crest {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .top-minedu-banner .badge-pill {
+      background: rgba(255,255,255,0.2);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    /* Main Navigation Header */
+    .app-header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .header-logo-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 2px 8px rgba(26,115,232,0.3);
+    }
+    .header-titles h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--secondary);
+      line-height: 1.2;
+    }
+    .header-titles p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* App Views Controller */
+    .view-screen {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+      width: 100%;
+    }
+    .view-screen.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 20px 48px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+      user-select: none;
+    }
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+      box-shadow: 0 2px 4px rgba(26,115,232,0.25);
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      box-shadow: 0 4px 8px rgba(26,115,232,0.35);
+    }
+    .btn-outline {
+      background-color: transparent;
+      color: var(--primary);
+      border-color: var(--border);
+    }
+    .btn-outline:hover {
+      background-color: var(--primary-light);
+      border-color: var(--primary);
+    }
+    .btn-success {
+      background-color: var(--success);
+      color: white;
+    }
+    .btn-success:hover {
+      background-color: #17652e;
+    }
+    .btn-danger {
+      background-color: var(--danger);
+      color: white;
+    }
+    .btn-danger:hover {
+      background-color: #b3261e;
+    }
+    .btn-warning {
+      background-color: var(--warning);
+      color: #202124;
+    }
+    .btn-lg {
+      padding: 14px 28px;
+      font-size: 1.1rem;
+      border-radius: var(--radius-md);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px;
+      transition: var(--transition);
+    }
+    .card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    /* LANDING PAGE STYLES */
+    .hero-banner {
+      background: linear-gradient(135deg, #0d47a1 0%, #1976d2 60%, #42a5f5 100%);
+      color: white;
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-banner::after {
+      content: "🎓";
+      position: absolute;
+      right: 20px;
+      bottom: -20px;
+      font-size: 10rem;
+      opacity: 0.12;
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.25);
+      backdrop-filter: blur(4px);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .hero-banner h2 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+    .hero-banner p {
+      font-size: 1.1rem;
+      opacity: 0.95;
+      max-width: 750px;
+      margin-bottom: 24px;
+    }
+
+    .info-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+    .metric-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+    .metric-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    .metric-icon.blue { background: var(--primary-light); color: var(--primary); }
+    .metric-icon.green { background: var(--success-light); color: var(--success); }
+    .metric-icon.amber { background: var(--warning-light); color: #b26a00; }
+    .metric-icon.purple { background: #f3e5f5; color: #7b1fa2; }
+    .metric-data h4 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+    .metric-data span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Mode Selection Cards */
+    .modes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 35px;
+    }
+    .mode-card {
+      background: white;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: var(--transition);
+      position: relative;
+    }
+    .mode-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+    .mode-card.featured {
+      border-color: var(--primary);
+      background: linear-gradient(180deg, #ffffff 0%, var(--primary-light) 180%);
+    }
+    .mode-card-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .mode-card-icon {
+      font-size: 2.2rem;
+      width: 60px;
+      height: 60px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary-light);
+    }
+    .mode-card h3 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--secondary);
+    }
+    .mode-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .mode-feature-list {
+      list-style: none;
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .mode-feature-list li {
+      font-size: 0.9rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mode-feature-list li span.check {
+      color: var(--success);
+      font-weight: bold;
+    }
+
+    /* Last Result Banner on Landing */
+    .history-card {
+      background: #f1f8e9;
+      border: 1px solid #c8e6c9;
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .history-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .history-info .icon {
+      font-size: 2rem;
+    }
+    .history-info h4 {
+      font-size: 1rem;
+      color: #2e7d32;
+    }
+    .history-info p {
+      font-size: 0.85rem;
+      color: #558b2f;
+    }
+
+    /* Category Preview Grid */
+    .categories-summary-section h3 {
+      font-size: 1.3rem;
+      margin-bottom: 16px;
+      color: var(--secondary);
+    }
+    .category-pills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .cat-pill {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .cat-pill span.count {
+      background: var(--bg-page);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* EXAM SCREEN LAYOUT */
+    .exam-header-bar {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      position: sticky;
+      top: 69px;
+      z-index: 90;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .exam-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .timer-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-page);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--text-main);
+      transition: var(--transition);
+    }
+    .timer-container.warning {
+      background: var(--warning-light);
+      border-color: var(--warning);
+      color: #995c00;
+    }
+    .timer-container.danger {
+      background: var(--danger-light);
+      border-color: var(--danger);
+      color: var(--danger);
+      animation: pulse 1s infinite alternate;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.04); }
+    }
+
+    .exam-progress-wrap {
+      flex: 1;
+      min-width: 200px;
+      max-width: 400px;
+    }
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .progress-bar-bg {
+      background: #e0e0e0;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .exam-content-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+      margin-top: 20px;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .exam-content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Question Card */
+    .question-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 28px;
+      box-shadow: var(--shadow-sm);
+    }
+    .question-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .q-badge-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .badge-category {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .badge-subcat {
+      background: var(--bg-page);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+    .q-number-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--secondary);
+    }
+
+    .flag-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      transition: var(--transition);
+    }
+    .flag-btn:hover {
+      background: var(--warning-light);
+      border-color: var(--warning);
+      color: #b26a00;
+    }
+    .flag-btn.flagged {
+      background: var(--warning-light);
+      border-color: var(--warning);
+      color: #b26a00;
+    }
+
+    /* Casuística Scenario Box */
+    .scenario-box {
+      background: #f1f5f9;
+      border-left: 4px solid var(--primary);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      font-size: 0.98rem;
+      color: #334155;
+      line-height: 1.65;
+    }
+    .scenario-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .prompt-text {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    /* Options List */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .option-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 18px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      background: white;
+      cursor: pointer;
+      transition: var(--transition);
+      user-select: none;
+    }
+    .option-item:hover {
+      border-color: var(--primary);
+      background: #f8fbff;
+    }
+    .option-item.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+    .option-letter {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      transition: var(--transition);
+    }
+    .option-item:hover .option-letter {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .option-item.selected .option-letter {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+    .option-label {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: var(--text-main);
+      flex: 1;
+    }
+
+    /* Question Action Bar */
+    .q-action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+      flex-wrap: wrap;
+    }
+    .nav-buttons-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* Exam Palette Sidebar */
+    .exam-palette-sidebar {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      position: sticky;
+      top: 155px;
+      box-shadow: var(--shadow-sm);
+    }
+    .palette-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--secondary);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .palette-legend {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+    }
+    .legend-dot.gray { background: #f1f3f4; }
+    .legend-dot.blue { background: var(--primary); border-color: var(--primary); }
+    .legend-dot.yellow { background: var(--warning); border-color: var(--warning); }
+    .legend-dot.active { border: 2px solid var(--text-main); background: white; }
+
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      max-height: 360px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .palette-btn {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: #f8f9fa;
+      color: var(--text-muted);
+      cursor: pointer;
+      position: relative;
+      transition: var(--transition);
+    }
+    .palette-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .palette-btn.answered {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+    .palette-btn.current {
+      outline: 2.5px solid var(--text-main);
+      outline-offset: 1px;
+      font-weight: 900;
+    }
+    .palette-btn.flagged::after {
+      content: "🚩";
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      font-size: 0.65rem;
+    }
+
+    /* Modal Dialog */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(2px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-dialog {
+      background: white;
+      border-radius: var(--radius-lg);
+      max-width: 500px;
+      width: 100%;
+      padding: 28px;
+      box-shadow: var(--shadow-lg);
+      animation: modalPop 0.25s ease-out;
+    }
+    @keyframes modalPop {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal-dialog h3 {
+      font-size: 1.3rem;
+      color: var(--secondary);
+      margin-bottom: 12px;
+    }
+    .modal-stats {
+      background: var(--bg-page);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      margin: 16px 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      text-align: center;
+      gap: 10px;
+    }
+    .modal-stats-item h5 {
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+    .modal-stats-item span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    /* RESULTS SCREEN */
+    .results-hero-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      margin-bottom: 30px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .results-badge-stamp {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+    .results-badge-stamp.approved {
+      background: var(--success-light);
+      color: var(--success);
+      border: 2px solid var(--success);
+    }
+    .results-badge-stamp.failed {
+      background: var(--danger-light);
+      color: var(--danger);
+      border: 2px solid var(--danger);
+    }
+
+    .score-circle-display {
+      font-size: 4rem;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 8px;
+      color: var(--secondary);
+    }
+    .score-circle-display span {
+      font-size: 1.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .score-sublabel {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .results-summary-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+    .res-metric {
+      background: var(--bg-page);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .res-metric h5 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .res-metric span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Escalas Magisteriales Reference Table */
+    .escalas-section {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-bottom: 30px;
+    }
+    .escalas-section h3 {
+      font-size: 1.2rem;
+      color: var(--secondary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .escalas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+    }
+    .escala-item-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      text-align: center;
+      background: var(--bg-page);
+      transition: var(--transition);
+    }
+    .escala-item-card.target {
+      border: 2px solid var(--primary);
+      background: var(--primary-light);
+    }
+    .escala-item-card h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .escala-item-card .req {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .escala-item-card .status {
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .escala-item-card .status.pass { color: var(--success); }
+    .escala-item-card .status.fail { color: var(--danger); }
+
+    /* Breakdown by Category Area */
+    .breakdown-section {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-bottom: 30px;
+    }
+    .breakdown-section h3 {
+      font-size: 1.2rem;
+      color: var(--secondary);
+      margin-bottom: 18px;
+    }
+    .cat-bar-item {
+      margin-bottom: 16px;
+    }
+    .cat-bar-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .cat-bar-bg {
+      background: #eceff1;
+      height: 12px;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .cat-bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      background: var(--primary);
+      transition: width 0.8s ease-out;
+    }
+
+    /* Results Action Buttons */
+    .results-cta-bar {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+
+    /* REVIEW MODE */
+    .review-filter-bar {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .review-filter-btn {
+      background: var(--bg-page);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .review-filter-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .review-filter-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    .review-cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .review-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+    .review-card.correct {
+      border-left: 6px solid var(--success);
+    }
+    .review-card.incorrect {
+      border-left: 6px solid var(--danger);
+    }
+    .review-card.unanswered {
+      border-left: 6px solid var(--warning);
+    }
+
+    .review-option {
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .review-option.is-correct {
+      background: var(--success-light);
+      border-color: var(--success);
+      color: #0d5322;
+      font-weight: 600;
+    }
+    .review-option.is-user-wrong {
+      background: var(--danger-light);
+      border-color: var(--danger);
+      color: #791912;
+      font-weight: 600;
+    }
+
+    .explanation-box {
+      margin-top: 16px;
+      background: #f0f7ff;
+      border: 1px solid #c2e0ff;
+      border-radius: var(--radius-sm);
+      padding: 16px;
+    }
+    .explanation-title {
+      font-weight: 700;
+      color: var(--primary-dark);
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .explanation-content {
+      font-size: 0.9rem;
+      color: #1e3a5f;
+      line-height: 1.6;
+    }
+
+    /* STUDY MODE */
+    .study-header-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+    .study-cat-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+    }
+    .study-tab-btn {
+      white-space: nowrap;
+      background: var(--bg-page);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .study-tab-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .study-tab-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    .study-stats-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .study-score-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-page);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+
+    .study-feedback-box {
+      margin-top: 20px;
+      padding: 18px;
+      border-radius: var(--radius-md);
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .study-feedback-box.correct {
+      background: var(--success-light);
+      border: 1.5px solid var(--success);
+      display: block;
+    }
+    .study-feedback-box.incorrect {
+      background: var(--danger-light);
+      border: 1.5px solid var(--danger);
+      display: block;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: auto;
+      background: #202124;
+      color: #9aa0a6;
+      padding: 24px 20px;
+      font-size: 0.85rem;
+      text-align: center;
+      border-top: 1px solid #3c4043;
+    }
+    footer a {
+      color: #8ab4f8;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top MINEDU Banner -->
+  <div class="top-minedu-banner">
+    <div class="crest">
+      <span>🇵🇪</span>
+      <span>MINISTERIO DE EDUCACIÓN • PERÚ</span>
+    </div>
+    <div class="badge-pill">
+      Carrera Pública Magisterial • Ley N° 29944
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <div class="header-title-group" onclick="app.showLanding()">
+        <div class="header-logo-icon">📖</div>
+        <div class="header-titles">
+          <h1>Simulador de Examen de Ascenso</h1>
+          <p>Educación Primaria • 1ª a 2ª Escala Magisterial</p>
+        </div>
+      </div>
+      <div id="header-actions">
+        <button class="btn btn-outline" onclick="app.showLanding()">🏠 Inicio</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- SCREEN 1: LANDING PAGE -->
+  <div id="screen-landing" class="view-screen active">
+    <div class="container">
+      
+      <!-- Hero Banner -->
+      <div class="hero-banner">
+        <div class="hero-badge">CONCURSO DE ASCENSO 2026</div>
+        <h2>Simulador Oficial de Casuísticas Pedagógicas</h2>
+        <p>Prepárate con casos reales del aula para docentes de Educación Primaria. Evaluación orientada al Currículo Nacional de la Educación Básica (CNEB), enfoque por competencias y evaluación formativa.</p>
+        <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+          <button class="btn btn-warning btn-lg" onclick="app.startExam()">🎯 Iniciar Simulacro de Examen</button>
+          <button class="btn btn-outline btn-lg" style="background: rgba(255,255,255,0.9); color: var(--secondary);" onclick="app.startStudyMode()">📖 Modo Práctica y Estudio</button>
+        </div>
+      </div>
+
+      <!-- Info Metrics Grid -->
+      <div class="info-metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon blue">📝</div>
+          <div class="metric-data">
+            <h4>60 Preguntas</h4>
+            <span>Por examen simulado</span>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon green">⏱️</div>
+          <div class="metric-data">
+            <h4>3 Horas</h4>
+            <span>Tiempo oficial cronometrado</span>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon amber">🎯</div>
+          <div class="metric-data">
+            <h4>54 Puntos</h4>
+            <span>Mínimo aprobatorio (2ª Escala)</span>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon purple">🏆</div>
+          <div class="metric-data">
+            <h4>1.5 Puntos</h4>
+            <span>Por acierto (Máx: 90 pts)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Previous History Alert (if available) -->
+      <div id="history-box" style="display: none;" class="history-card">
+        <div class="history-info">
+          <div class="icon">📊</div>
+          <div>
+            <h4 id="history-title">Último Examen Realizado</h4>
+            <p id="history-desc">Puntaje obtenido: -- / 90 pts</p>
+          </div>
+        </div>
+        <button class="btn btn-outline" onclick="app.showLastResults()">Ver Resultados Anteriores</button>
+      </div>
+
+      <!-- Main Mode Cards -->
+      <div class="modes-grid">
+        <div class="mode-card featured">
+          <div>
+            <div class="mode-card-header">
+              <div class="mode-card-icon">🎯</div>
+              <div>
+                <h3>Modo Examen</h3>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">SIMULACRO EN TIEMPO REAL</span>
+              </div>
+            </div>
+            <p>Experimenta las condiciones reales de la Prueba Nacional de Ascenso de Escala Magisterial.</p>
+            <ul class="mode-feature-list">
+              <li><span class="check">✓</span> 60 casuísticas seleccionadas aleatoriamente</li>
+              <li><span class="check">✓</span> Cronómetro regresivo de 3 horas continuas</li>
+              <li><span class="check">✓</span> Panel de navegación y marcado de preguntas 🚩</li>
+              <li><span class="check">✓</span> Sin puntos en contra por respuesta incorrecta</li>
+              <li><span class="check">✓</span> Informe de resultados con estado de aprobación y desglose</li>
+            </ul>
+          </div>
+          <button class="btn btn-primary btn-lg" style="width: 100%;" onclick="app.startExam()">Comenzar Examen Oficial</button>
+        </div>
+
+        <div class="mode-card">
+          <div>
+            <div class="mode-card-header">
+              <div class="mode-card-icon" style="background: #e8f5e9; color: var(--success);">📖</div>
+              <div>
+                <h3>Modo Estudio</h3>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--success);">PRÁCTICA Y RETROALIMENTACIÓN</span>
+              </div>
+            </div>
+            <p>Resuelve preguntas a tu propio ritmo con sustento pedagógico inmediato tras cada respuesta.</p>
+            <ul class="mode-feature-list">
+              <li><span class="check">✓</span> Filtra por áreas curriculares específicas</li>
+              <li><span class="check">✓</span> Explicación pedagógica detallada (CNEB/MINEDU)</li>
+              <li><span class="check">✓</span> Análisis de distractores y errores comunes</li>
+              <li><span class="check">✓</span> Sin límite de tiempo con contador de aciertos en vivo</li>
+              <li><span class="check">✓</span> Ideal para afianzar conocimientos pedagógicos</li>
+            </ul>
+          </div>
+          <button class="btn btn-outline btn-lg" style="width: 100%; border-color: var(--success); color: var(--success);" onclick="app.startStudyMode()">Iniciar Modo Estudio</button>
+        </div>
+      </div>
+
+      <!-- Categories Overview -->
+      <div class="categories-summary-section">
+        <h3>Áreas y Competencias Evaluadas (Banco de 75 Casuísticas)</h3>
+        <div class="category-pills-grid">
+          <div class="cat-pill">
+            <span>🧠 Conocimientos Pedagógicos</span>
+            <span class="count">20 casos</span>
+          </div>
+          <div class="cat-pill">
+            <span>📚 Comunicación</span>
+            <span class="count">18 casos</span>
+          </div>
+          <div class="cat-pill">
+            <span>📐 Matemática</span>
+            <span class="count">17 casos</span>
+          </div>
+          <div class="cat-pill">
+            <span>👥 Personal Social</span>
+            <span class="count">10 casos</span>
+          </div>
+          <div class="cat-pill">
+            <span>🔬 Ciencia y Tecnología</span>
+            <span class="count">10 casos</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SCREEN 2: EXAM MODE -->
+  <div id="screen-exam" class="view-screen">
+    <!-- Sticky Exam Bar -->
+    <div class="exam-header-bar">
+      <div class="exam-header-inner">
+        <div class="timer-container" id="exam-timer-box">
+          <span>⏱️</span>
+          <span id="exam-timer-text">03:00:00</span>
+        </div>
+
+        <div class="exam-progress-wrap">
+          <div class="progress-labels">
+            <span>Progreso del Examen</span>
+            <span id="exam-progress-text">0 / 60</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="exam-progress-bar"></div>
+          </div>
+        </div>
+
+        <div>
+          <button class="btn btn-danger" onclick="app.confirmFinishExam()">Finalizar Examen 🏁</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exam Content Area -->
+    <div class="container" style="padding-top: 10px;">
+      <div class="exam-content-grid">
+        
+        <!-- Left: Current Question Card -->
+        <div class="question-card">
+          <div class="question-top-bar">
+            <div class="q-badge-group">
+              <span class="q-number-title" id="q-number-display">Pregunta 1 de 60</span>
+              <span class="badge-category" id="q-category-display">Categoría</span>
+              <span class="badge-subcat" id="q-subcat-display">Subárea</span>
+            </div>
+            <button class="flag-btn" id="q-flag-btn" onclick="app.toggleFlagCurrent()">
+              <span>🚩</span> <span id="q-flag-text">Marcar para revisión</span>
+            </button>
+          </div>
+
+          <!-- Scenario -->
+          <div class="scenario-box">
+            <div class="scenario-label">📌 Situación de Aprendizaje</div>
+            <div id="q-scenario-text">Cargando situación...</div>
+          </div>
+
+          <!-- Question Prompt -->
+          <div class="prompt-text" id="q-prompt-text">Cargando pregunta...</div>
+
+          <!-- Options List -->
+          <div class="options-list" id="q-options-container">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Action Navigation Bar -->
+          <div class="q-action-bar">
+            <button class="btn btn-outline" id="btn-prev-q" onclick="app.prevQuestion()">⬅ Anterior</button>
+            <div class="nav-buttons-group">
+              <button class="btn btn-primary" id="btn-next-q" onclick="app.nextQuestion()">Siguiente ➡</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Palette Sidebar -->
+        <div class="exam-palette-sidebar">
+          <div class="palette-title">
+            <span>Navegador de Preguntas</span>
+            <span id="palette-status-count" style="font-size: 0.8rem; color: var(--primary);">0/60</span>
+          </div>
+
+          <div class="palette-legend">
+            <div class="legend-item"><div class="legend-dot gray"></div> <span>Sin responder</span></div>
+            <div class="legend-item"><div class="legend-dot blue"></div> <span>Respondida</span></div>
+            <div class="legend-item"><div class="legend-dot yellow"></div> <span>Marcada 🚩</span></div>
+            <div class="legend-item"><div class="legend-dot active"></div> <span>Actual</span></div>
+          </div>
+
+          <div class="palette-grid" id="palette-grid-buttons">
+            <!-- 60 buttons rendered by JS -->
+          </div>
+
+          <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 14px;">
+            <button class="btn btn-danger" style="width: 100%;" onclick="app.confirmFinishExam()">Entregar Examen</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: RESULTS SCREEN -->
+  <div id="screen-results" class="view-screen">
+    <div class="container">
+      
+      <!-- Hero Score Card -->
+      <div class="results-hero-card">
+        <div id="results-stamp" class="results-badge-stamp approved">
+          <span>✅</span> <span id="results-stamp-text">¡APROBADO PARA LA 2ª ESCALA!</span>
+        </div>
+
+        <div class="score-circle-display">
+          <span id="res-score-earned">0.0</span><span> / 90 pts</span>
+        </div>
+        <div class="score-sublabel" id="res-score-detail">
+          Has acertado 0 de 60 preguntas (0.0% de aciertos)
+        </div>
+
+        <div class="results-summary-row">
+          <div class="res-metric">
+            <h5 id="res-correct-count" style="color: var(--success);">0</h5>
+            <span>Correctas (+1.5 pts c/u)</span>
+          </div>
+          <div class="res-metric">
+            <h5 id="res-wrong-count" style="color: var(--danger);">0</h5>
+            <span>Incorrectas (0 pts)</span>
+          </div>
+          <div class="res-metric">
+            <h5 id="res-blank-count" style="color: var(--warning);">0</h5>
+            <span>Sin responder (0 pts)</span>
+          </div>
+          <div class="res-metric">
+            <h5 id="res-time-taken">0h 00m</h5>
+            <span>Tiempo Empleado</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Escalas Magisteriales Benchmark -->
+      <div class="escalas-section">
+        <h3>🏆 Comparativo Oficial de Escalas Magisteriales (MINEDU)</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
+          Para ascender a la 2ª Escala se exige un mínimo de <strong>54 puntos</strong> (36 preguntas correctas). A continuación se muestra tu habilitación para las distintas escalas:
+        </p>
+        <div class="escalas-grid">
+          <div class="escala-item-card target" id="escala-card-2">
+            <h4>2ª Escala</h4>
+            <div class="req">Mínimo: 54 pts (60%)</div>
+            <div class="status" id="escala-status-2">--</div>
+          </div>
+          <div class="escala-item-card" id="escala-card-3">
+            <h4>3ª Escala</h4>
+            <div class="req">Mínimo: 57 pts (63.3%)</div>
+            <div class="status" id="escala-status-3">--</div>
+          </div>
+          <div class="escala-item-card" id="escala-card-4">
+            <h4>4ª Escala</h4>
+            <div class="req">Mínimo: 60 pts (66.7%)</div>
+            <div class="status" id="escala-status-4">--</div>
+          </div>
+          <div class="escala-item-card" id="escala-card-5">
+            <h4>5ª Escala</h4>
+            <div class="req">Mínimo: 63 pts (70%)</div>
+            <div class="status" id="escala-status-5">--</div>
+          </div>
+          <div class="escala-item-card" id="escala-card-6">
+            <h4>6ª Escala</h4>
+            <div class="req">Mínimo: 66 pts (73.3%)</div>
+            <div class="status" id="escala-status-6">--</div>
+          </div>
+          <div class="escala-item-card" id="escala-card-7">
+            <h4>7ª - 8ª Escala</h4>
+            <div class="req">Mínimo: 69 pts (76.7%)</div>
+            <div class="status" id="escala-status-7">--</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Area Breakdown -->
+      <div class="breakdown-section">
+        <h3>📊 Rendimiento por Área Curricular y Pedagógica</h3>
+        <div id="category-breakdown-bars">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Results CTA Bar -->
+      <div class="results-cta-bar">
+        <button class="btn btn-primary btn-lg" onclick="app.showReviewScreen()">🔍 Revisar Respuestas y Explicaciones</button>
+        <button class="btn btn-outline btn-lg" onclick="app.startExam()">🔄 Rendir Nuevo Examen</button>
+        <button class="btn btn-outline btn-lg" onclick="app.showLanding()">🏠 Volver al Inicio</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SCREEN 4: REVIEW MODE -->
+  <div id="screen-review" class="view-screen">
+    <div class="container">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h2 style="font-size: 1.6rem; color: var(--secondary);">Revisión Pedagógica Detallada</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Analiza cada una de las 60 casuísticas con su sustento curricular oficial CNEB</p>
+        </div>
+        <button class="btn btn-outline" onclick="app.showResults()">⬅ Volver a Resultados</button>
+      </div>
+
+      <!-- Filters -->
+      <div class="review-filter-bar">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="review-filter-btn active" onclick="app.filterReview('all', this)">Todas (<span id="rev-count-all">60</span>)</button>
+          <button class="review-filter-btn" onclick="app.filterReview('correct', this)">Correctas (<span id="rev-count-correct">0</span>)</button>
+          <button class="review-filter-btn" onclick="app.filterReview('incorrect', this)">Incorrectas (<span id="rev-count-incorrect">0</span>)</button>
+          <button class="review-filter-btn" onclick="app.filterReview('unanswered', this)">Sin responder (<span id="rev-count-unanswered">0</span>)</button>
+        </div>
+      </div>
+
+      <!-- Review Questions List -->
+      <div class="review-cards-list" id="review-cards-container">
+        <!-- Rendered by JS -->
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SCREEN 5: STUDY MODE -->
+  <div id="screen-study" class="view-screen">
+    <div class="container">
+      
+      <div class="study-header-card">
+        <div style="margin-bottom: 14px;">
+          <h2 style="font-size: 1.4rem; color: var(--secondary); margin-bottom: 4px;">📖 Modo Estudio: Práctica Guiada</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Selecciona un área temática para practicar con retroalimentación inmediata y sustento pedagógico en cada pregunta.</p>
+        </div>
+
+        <!-- Topic Tabs -->
+        <div class="study-cat-tabs">
+          <button class="study-tab-btn active" onclick="app.setStudyCategory('ALL', this)">Todas las Áreas (75)</button>
+          <button class="study-tab-btn" onclick="app.setStudyCategory('Conocimientos Pedagógicos', this)">Conocimientos Pedagógicos (20)</button>
+          <button class="study-tab-btn" onclick="app.setStudyCategory('Comunicación', this)">Comunicación (18)</button>
+          <button class="study-tab-btn" onclick="app.setStudyCategory('Matemática', this)">Matemática (17)</button>
+          <button class="study-tab-btn" onclick="app.setStudyCategory('Personal Social', this)">Personal Social (10)</button>
+          <button class="study-tab-btn" onclick="app.setStudyCategory('Ciencia y Tecnología', this)">Ciencia y Tecnología (10)</button>
+        </div>
+
+        <div class="study-stats-row">
+          <span id="study-q-counter" style="font-weight: 700; color: var(--secondary);">Pregunta 1 de 75</span>
+          <div class="study-score-pill">
+            <span style="color: var(--success);">Aciertos: <strong id="study-hits">0</strong></span>
+            <span style="color: var(--border);">|</span>
+            <span style="color: var(--danger);">Errores: <strong id="study-misses">0</strong></span>
+          </div>
+          <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem;" onclick="app.resetStudySession()">Reiniciar Práctica</button>
+        </div>
+      </div>
+
+      <!-- Question Card for Study -->
+      <div class="question-card" id="study-q-card">
+        <div class="question-top-bar">
+          <div class="q-badge-group">
+            <span class="badge-category" id="study-cat-pill">Categoría</span>
+            <span class="badge-subcat" id="study-subcat-pill">Subárea</span>
+          </div>
+        </div>
+
+        <div class="scenario-box">
+          <div class="scenario-label">📌 Situación de Aprendizaje</div>
+          <div id="study-scenario-text">Cargando situación...</div>
+        </div>
+
+        <div class="prompt-text" id="study-prompt-text">Cargando pregunta...</div>
+
+        <div class="options-list" id="study-options-container">
+          <!-- Rendered by JS -->
+        </div>
+
+        <!-- Feedback Box -->
+        <div class="study-feedback-box" id="study-feedback">
+          <div class="explanation-title" id="study-fb-title">💡 Sustento Pedagógico MINEDU</div>
+          <div class="explanation-content" id="study-fb-text">...</div>
+        </div>
+
+        <div class="q-action-bar" style="margin-top: 20px;">
+          <button class="btn btn-outline" onclick="app.prevStudyQuestion()">⬅ Anterior</button>
+          <button class="btn btn-primary" id="btn-next-study" onclick="app.nextStudyQuestion()">Siguiente Pregunta ➡</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div class="modal-overlay" id="exam-confirm-modal">
+    <div class="modal-dialog">
+      <h3>¿Deseas finalizar el examen?</h3>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Una vez finalizado, se procesarán tus respuestas y se calculará tu puntaje oficial. No podrás modificar tus elecciones.
+      </p>
+
+      <div class="modal-stats">
+        <div class="modal-stats-item">
+          <h5 id="modal-stat-answered" style="color: var(--primary);">0</h5>
+          <span>Respondidas</span>
+        </div>
+        <div class="modal-stats-item">
+          <h5 id="modal-stat-blank" style="color: var(--warning);">60</h5>
+          <span>Sin responder</span>
+        </div>
+        <div class="modal-stats-item">
+          <h5 id="modal-stat-flagged" style="color: #b26a00;">0</h5>
+          <span>Marcadas 🚩</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="app.closeModal()">Continuar Examen</button>
+        <button class="btn btn-danger" onclick="app.finishExam()">Confirmar y Entregar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>Simulador Pedagógico para el Concurso de Ascenso de Escala Magisterial • Educación Primaria</p>
+    <p style="margin-top: 4px; font-size: 0.75rem;">Alineado al Currículo Nacional de la Educación Básica (CNEB) y a los estándares del Ministerio de Educación del Perú.</p>
+  </footer>
+
+  <!-- SCRIPT: Complete Question Bank (75 Questions) + App Engine -->
+  <script>
+  // QUESTION BANK DEFINITIONS (75 High-Quality Pedagogical Casuísticas)
+  const BANCO_PREGUNTAS = [
+    // ==========================================
+    // ÁREA 1: CONOCIMIENTOS PEDAGÓGICOS (20 preguntas)
+    // ==========================================
+    {
+      id: 1,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Evaluación formativa y retroalimentación',
+      situacion: 'En una sesión de aprendizaje de cuarto grado, los estudiantes elaboran un afiche sobre el cuidado del agua en la comunidad. La docente revisa el avance de un equipo cuyo texto no presenta concordancia de género ni número entre los adjetivos y sustantivos, y el lema central no es claro.',
+      pregunta: '¿Cuál de las siguientes intervenciones docentes evidencia una retroalimentación reflexiva según el enfoque formativo?',
+      opciones: [
+        'Explicarles en la pizarra las reglas gramaticales de concordancia y redactarles un ejemplo de lema adecuado para que lo copien en su afiche.',
+        'Pedirles que lean su texto en voz alta y preguntarles: "¿A quiénes está dirigido su afiche? ¿Qué mensaje desean transmitir en su lema? Al leer esta frase, ¿notan alguna diferencia entre cómo suena \'el agua limpias\' y \'el agua limpia\'? ¿Por qué?"',
+        'Señalar con un plumón rojo las palabras discordantes y calificar el afiche con nota B, indicándoles que deben corregirlo para la siguiente sesión.',
+        'Reescribir el lema en una hoja borrador y decirles que es indispensable que sigan la estructura convencional para obtener una calificación sobresaliente.'
+      ],
+      correcta: 1,
+      explicacion: 'La retroalimentación por descubrimiento o reflexiva (Anijovich, MINEDU) consiste en guiar a los estudiantes mediante preguntas abiertas para que analicen sus propias producciones, identifiquen contradicciones o desaciertos y elaboren sus propias estrategias de mejora, sin darle la respuesta resuelta de manera directa.'
+    },
+    {
+      id: 2,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Evaluación formativa y retroalimentación',
+      situacion: 'Un docente de quinto grado aplica la "Escalera de la Retroalimentación" de Daniel Wilson al evaluar los informes de indagación científica de sus estudiantes.',
+      pregunta: '¿Cuál de las siguientes secuencias de acciones corresponde de manera ordenada y pertinente a los cuatro pasos de esta herramienta pedagógica?',
+      opciones: [
+        'Calificar el informe cuantitativamente, felicitar el trabajo, sugerir lecturas adicionales y pedir que repitan el experimento.',
+        'Señalar los errores cometidos, explicar la teoría correcta, felicitar el esfuerzo y asignar una tarea domiciliaria.',
+        'Clarificar dudas sobre lo presentado en el informe, valorar los aspectos positivos logrados, expresar inquietudes o reflexiones sobre los aspectos a mejorar y ofrecer sugerencias concretas de avance.',
+        'Comparar los informes entre los equipos, premiar al equipo más destacado, corregir la redacción y archivar las evidencias.'
+      ],
+      correcta: 2,
+      explicacion: 'La Escalera de la Retroalimentación de Daniel Wilson contempla cuatro pasos ordenados: 1) Clarificar (hacer preguntas para entender mejor la evidencia), 2) Valorar (reconocer fortalezas genuinas), 3) Expresar inquietudes (plantear dudas pedagógicas no amenazantes) y 4) Hacer sugerencias (brindar pautas para alcanzar el siguiente nivel).'
+    },
+    {
+      id: 3,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Evaluación formativa y retroalimentación',
+      situacion: 'Al iniciar una unidad sobre textos argumentativos, una docente desea que sus estudiantes de sexto grado comprendan con claridad cómo serán evaluadas sus producciones escritas.',
+      pregunta: '¿Cuál de las siguientes acciones pedagógicas es la más adecuada para asegurar que los estudiantes se apropien de los criterios de evaluación?',
+      opciones: [
+        'Construir de manera conjunta con los estudiantes los criterios de una rúbrica analítica, analizando previamente ejemplos de textos argumentativos logrados y no logrados.',
+        'Entregar la rúbrica impresa al finalizar la unidad para que verifiquen el puntaje asignado a sus ensayos.',
+        'Dictar en la primera clase los estándares del ciclo y exigir que los memoricen en sus cuadernos.',
+        'Aplicar una prueba objetiva de opción múltiple sobre los conceptos teóricos del texto argumentativo.'
+      ],
+      correcta: 0,
+      explicacion: 'En el marco de la evaluación formativa (CNEB), los estudiantes logran autorregular su aprendizaje cuando participan en el análisis o co-construcción de los criterios e instrumentos de evaluación (rúbricas) a partir de evidencias reales, lo que les permite saber con anticipación qué se espera de ellos.'
+    },
+    {
+      id: 4,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Evaluación formativa y retroalimentación',
+      situacion: 'Un docente recopila los cuadernos de trabajo de tercer grado para evaluar la resolución de problemas de adición con canje. Nota que varios estudiantes colocan el número llevado directamente en la columna de las unidades.',
+      pregunta: 'Desde el enfoque formativo, ¿qué debe hacer el docente con esta evidencia de aprendizaje?',
+      opciones: [
+        'Colocar una "X" sobre las operaciones erróneas y solicitar a los padres de familia que contraten un profesor particular.',
+        'Revisar solo los cuadernos de los estudiantes que acertaron para utilizarlos como modelo exclusivo ante toda la clase.',
+        'Analizar el patrón del error como una hipótesis del estudiante, planificar una sesión con material multibase para representar el canje y retroalimentar a través del diálogo.',
+        'Ignorar el procedimiento y asignar puntos únicamente a quienes llegaron a la respuesta correcta final.'
+      ],
+      correcta: 2,
+      explicacion: 'La evidencia de aprendizaje no se limita a calificar el resultado; exige analizar los procesos cognitivos subyacentes. El error es una oportunidad de aprendizaje que debe orientar la reconfiguración de la enseñanza y el uso de material concreto.'
+    },
+    {
+      id: 5,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Evaluación formativa y retroalimentación',
+      situacion: 'Durante una reunión de trabajo colegiado, los docentes discuten sobre la diferencia entre la evaluación formativa y la evaluación certificadora o sumativa.',
+      pregunta: '¿Cuál de las siguientes afirmaciones describe de manera precisa el propósito primordial de la evaluación formativa según el CNEB?',
+      opciones: [
+        'Clasificar a los estudiantes en orden de mérito para determinar los primeros puestos de la institución educativa.',
+        'Identificar los avances, dificultades y logros de los estudiantes durante el proceso de aprendizaje para brindar un acompañamiento oportuno que les permita mejorar continuamente.',
+        'Comprobar al término del año escolar cuántos estudiantes aprueban o desaprueban el grado para la estadística oficial.',
+        'Medir exclusivamente la cantidad de contenidos conceptuales memorizados por los estudiantes al final de cada unidad.'
+      ],
+      correcta: 1,
+      explicacion: 'El CNEB establece que la finalidad primordial de la evaluación formativa es contribuir a la mejora de los aprendizajes durante el proceso, ayudando al estudiante a ser consciente de sus logros y brechas, y permitiendo al docente reajustar su práctica pedagógica.'
+    },
+    {
+      id: 6,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Conflicto cognitivo y error como oportunidad',
+      situacion: 'En una sesión de tercer grado sobre las propiedades de la materia, la docente muestra una canica de vidrio pequeña y una pelota grande de tecnopor. La mayoría de estudiantes afirma: "La pelota grande se va a hundir porque es mucho más grande y la canica pequeña va a flotar". La docente coloca ambos objetos en un recipiente con agua y los estudiantes observan asombrados que la canica se hunde y la pelota de tecnopor flota.',
+      pregunta: '¿Qué proceso pedagógico ha provocado intencionalmente la docente con esta experiencia?',
+      opciones: [
+        'Transferencia de saberes.',
+        'Metacognición sumativa.',
+        'Conflicto cognitivo o desestabilización de esquemas previos.',
+        'Evaluación diagnóstica estandarizada.'
+      ],
+      correcta: 2,
+      explicacion: 'El conflicto cognitivo (Piaget) se genera cuando las concepciones o saberes previos del estudiante entran en contradicción con la evidencia de la realidad, provocando una disonancia o desequilibrio que lo motiva a construir un nuevo esquema explicativo (en este caso, diferenciando volumen de densidad).'
+    },
+    {
+      id: 7,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Conflicto cognitivo y error como oportunidad',
+      situacion: 'Al comparar números decimales en cuarto grado, un estudiante sostiene con seguridad que 0,75 es mayor que 0,8 "porque 75 es mucho más grande que 8".',
+      pregunta: '¿Cuál de las siguientes acciones pedagógicas aprovecha el error como oportunidad de aprendizaje constructivo?',
+      opciones: [
+        'Pedir al estudiante que represente ambos decimales utilizando décimos y centésimos en cuadrículas de 100 partes iguales y preguntarle: "¿Cuántas partes sombreadas tiene 0,8 y cuántas 0,75? ¿Cuál de las dos cantidades cubre mayor superficie?".',
+        'Decirle directamente que su respuesta está equivocada, borrarla y pedir a un compañero destacado que escriba la respuesta correcta.',
+        'Dictarle la regla mnemotécnica de agregar ceros a la derecha sin explicarle el significado de los órdenes decimales.',
+        'Colocarle un calificativo desaprobatorio para que preste mayor atención en la siguiente explicación teórica.'
+      ],
+      correcta: 0,
+      explicacion: 'Aprovechar el error constructivo implica no censurarlo, sino ofrecer experiencias de confrontación visual o concreta (cuadrículas de base 10) que permitan al estudiante identificar por sí mismo la falacia de extrapolar las reglas de los números naturales a los números racionales.'
+    },
+    {
+      id: 8,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Conflicto cognitivo y error como oportunidad',
+      situacion: 'En una sesión de Personal Social sobre la época colonial, un estudiante de sexto grado afirma: "Todos los españoles eran malos y crueles, y todos los indígenas eran completamente pacíficos y nunca peleaban entre ellos".',
+      pregunta: '¿Qué intervención docente promueve un conflicto cognitivo que favorezca la perspectiva histórica crítica?',
+      opciones: [
+        'Aceptar la afirmación del estudiante para no afectar su motivación patriótica.',
+        'Amonestar al estudiante por emitir juicios de valor sin fundamento bibliográfico.',
+        'Proponer la lectura y comparación de testimonios de época que evidencien tanto la resistencia de líderes indígenas como las alianzas de diversas etnias andinas con los españoles frente al dominio incaico.',
+        'Explicar que la historia no debe ser cuestionada por los estudiantes sino aceptada según el texto escolar.'
+      ],
+      correcta: 2,
+      explicacion: 'Para superar visiones maniqueas o simplistas de la historia, el docente promueve el conflicto cognitivo mediante el contraste de fuentes históricas diversas y la multiperspectividad, permitiendo comprender la complejidad de las relaciones sociales de la época.'
+    },
+    {
+      id: 9,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Conflicto cognitivo y error como oportunidad',
+      situacion: 'Al calcular el perímetro y el área de figuras geométricas, varios estudiantes de quinto grado afirman que "si dos figuras tienen el mismo perímetro, obligatoriamente deben tener la misma área".',
+      pregunta: '¿Cuál de las siguientes actividades genera de mejor manera un conflicto cognitivo para superar esta concepción errónea?',
+      opciones: [
+        'Pedirles que construyan con lana de longitud fija (p. ej., 24 cm) diferentes rectángulos sobre una cuadrícula y cuenten la cantidad de cuadraditos (área) que encierra cada uno.',
+        'Anotar las fórmulas de perímetro y área en la pizarra y pedirles que las repitan oralmente diez veces.',
+        'Hacerles resolver 20 ejercicios mecánicos del libro hasta que memoricen las respuestas de memoria.',
+        'Darles una charla magistral sobre la independencia entre las magnitudes de longitud y superficie.'
+      ],
+      correcta: 0,
+      explicacion: 'La manipulación directa con una cuerda fija de perímetro constante (24 cm) permite formar rectángulos de 1x11 (área 11), 2x10 (área 20), 4x8 (área 32) y 6x6 (área 36), evidenciando de manera irrefutable que figuras con idéntico perímetro pueden tener áreas radicalmente diferentes.'
+    },
+    {
+      id: 10,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Planificación curricular',
+      situacion: 'Un docente de una institución educativa rural planifica una unidad didáctica y busca diseñar una "situación significativa" auténtica y desafiante.',
+      pregunta: '¿Cuál de las siguientes propuestas reúne de manera óptima las características de una situación significativa según las orientaciones del CNEB?',
+      opciones: [
+        'Pedir a los estudiantes que lean el capítulo 4 del texto del MINEDU y respondan individualmente el cuestionario al final de la página.',
+        'Plantear el problema de la pérdida de cosechas locales por las heladas recurrentes, formulando un reto que movilice el diseño de alternativas de protección agrícola y la redacción de propuestas comunales.',
+        'Organizar una competencia de deletreo de términos científicos para premiar al estudiante que demuestre mayor velocidad memorística.',
+        'Copiar de internet un proyecto de robótica avanzada diseñado para escuelas urbanas que cuentan con laboratorios de última generación.'
+      ],
+      correcta: 1,
+      explicacion: 'Una situación significativa en el CNEB parte de problemas o intereses reales del contexto sociocultural del estudiante, formula preguntas desafiantes (retos) y exige la movilización articulada de diversas competencias y capacidades para su resolución.'
+    },
+    {
+      id: 11,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Planificación curricular',
+      situacion: 'En el proceso de planificación curricular colegiada, los docentes revisan el enfoque de la "Planificación Invertida" o diseño hacia atrás (Wiggins y McTighe).',
+      pregunta: '¿Cuál es la secuencia lógica que debe seguir el docente bajo este enfoque de planificación?',
+      opciones: [
+        '1° Diseñar actividades divertidas, 2° buscar materiales didácticos, 3° aplicar una prueba al final.',
+        '1° Determinar los propósitos de aprendizaje (competencias y desempeños), 2° establecer los criterios y evidencias de aprendizaje, 3° diseñar las situaciones, estrategias y secuencias didácticas.',
+        '1° Seleccionar las lecturas del libro, 2° elaborar el horario semanal de clases, 3° asignar tareas para la casa.',
+        '1° Fijar las fechas de las evaluaciones bimestrales, 2° cronometrar los tiempos, 3° dictar las clases magistrales.'
+      ],
+      correcta: 1,
+      explicacion: 'La planificación invertida (CNEB) demanda definir primero QUÉ se espera que aprendan (propósitos/competencias), segundo CÓMO sabremos que lo aprendieron (evidencias y criterios de evaluación), y finalmente QUÉ experiencias y actividades didácticas se requieren para alcanzar dicha meta.'
+    },
+    {
+      id: 12,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Planificación curricular',
+      situacion: 'Una docente de segundo grado observa que el estándar de aprendizaje del ciclo indica que los estudiantes deben deducir relaciones de causa-efecto en textos narrativos. Sin embargo, en el aula hay estudiantes que aún están consolidando la comprensión literal.',
+      pregunta: '¿Qué decisión pedagógica es la más adecuada respecto a la relación entre los estándares y las necesidades del aula?',
+      opciones: [
+        'Obligar a todos los estudiantes a responder preguntas inferenciales complejas sin brindar ningún andamiaje, pues el estándar es obligatorio.',
+        'Desestimar el estándar nacional y trabajar únicamente habilidades de decodificación mecánica durante todo el año.',
+        'Tomar el estándar de aprendizaje como un referente holístico del ciclo, ofreciendo niveles diferenciados de apoyo y preguntas escalonadas para promover progresivamente la deducción de relaciones causales.',
+        'Separar a los estudiantes en salones distintos de acuerdo con su nivel de rendimiento académico.'
+      ],
+      correcta: 2,
+      explicacion: 'Los estándares de aprendizaje describen el desarrollo de una competencia a lo largo de ciclos educativos y sirven de referente común. El docente no debe rebajar las expectativas ni excluir, sino diseñar mediaciones y andamiajes pedagógicos para que cada estudiante progrese hacia el nivel esperado.'
+    },
+    {
+      id: 13,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Enfoque por competencias',
+      situacion: 'Durante una jornada de capacitación docente, un profesor sostiene: "Para mí, enseñar por competencias significa que los estudiantes acumulen muchos datos sobre la historia y la ciencia, para que puedan responder cualquier examen".',
+      pregunta: '¿Por qué esta afirmación es incompatible con la definición de competencia del CNEB?',
+      opciones: [
+        'Porque en el colegio primario los estudiantes solo deben jugar y no deben aprender conceptos científicos.',
+        'Porque una competencia es la facultad de combinar un conjunto de capacidades para lograr un propósito específico en una situación determinada, actuando de manera pertinente y con sentido ético, no la mera memorización pasiva de datos.',
+        'Porque las competencias solo se aplican en la educación secundaria y superior técnica.',
+        'Porque la adquisición de información teórica es completamente innecesaria en la vida cotidiana.'
+      ],
+      correcta: 1,
+      explicacion: 'Según el Currículo Nacional, ser competente no es saber datos de memoria, sino saber movilizar, transferir y combinar conocimientos, habilidades socioemocionales y actitudes para resolver problemas complejos y desafiantes en contextos reales.'
+    },
+    {
+      id: 14,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Enfoque por competencias',
+      situacion: 'Al concluir una sesión de aprendizaje de matemática, un docente pide a sus estudiantes que completen una ficha con las siguientes preguntas: "¿Qué estrategia utilicé hoy para resolver el problema? ¿En qué momento tuve dudas y cómo las superé? ¿En qué otras situaciones de mi vida puedo aplicar lo aprendido?".',
+      pregunta: '¿Qué competencia transversal del CNEB está promoviendo directamente el docente con esta actividad?',
+      opciones: [
+        'Se desenvuelve en entornos virtuales generados por las TIC.',
+        'Construye su identidad comunitaria.',
+        'Gestiona su aprendizaje de manera autónoma.',
+        'Convive y participa democráticamente en la búsqueda del bien común.'
+      ],
+      correcta: 2,
+      explicacion: 'La competencia transversal "Gestiona su aprendizaje de manera autónoma" implica que el estudiante tome conciencia de sus propios procesos de pensamiento (metacognición), monitoree su desempeño, evalúe sus estrategias y reconozca sus fortalezas y áreas de mejora.'
+    },
+    {
+      id: 15,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Enfoque por competencias',
+      situacion: 'En una escuela multigrado de la sierra peruana, una docente observa que los abuelos de la comunidad utilizan las fases de la luna y el comportamiento de las aves para predecir las épocas de lluvia y siembra.',
+      pregunta: 'Bajo el Enfoque Intercultural del CNEB, ¿cuál es la actitud pedagógica más pertinente de la docente?',
+      opciones: [
+        'Prohibir que los estudiantes hablen de esas creencias porque carecen de validez en los laboratorios modernos.',
+        'Valorar y dialogar con los saberes ancestrales de la comunidad, propiciando que los estudiantes indaguen sobre su fundamentación práctica y los contrasten respetuosamente con los conocimientos meteorológicos convencionales.',
+        'Explicar que las tradiciones orales son solo mitos y leyendas sin ninguna utilidad en la agricultura actual.',
+        'Pedir a los comuneros que dejen de confundir a los niños con observaciones de la naturaleza.'
+      ],
+      correcta: 1,
+      explicacion: 'El enfoque intercultural promueve el diálogo de saberes entre la ciencia contemporánea y los conocimientos de los pueblos originarios, reconociendo la riqueza de los saberes locales y fomentando un aprendizaje significativo y contextualizado.'
+    },
+    {
+      id: 16,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Atención a la diversidad e inclusión / DUA',
+      situacion: 'En un aula de tercer grado se encuentra matriculada una estudiante con discapacidad visual parcial (baja visión). La docente desea asegurar su plena participación en las actividades de lectura y comprensión.',
+      pregunta: 'Desde las pautas del Diseño Universal para el Aprendizaje (DUA), ¿qué medida ejemplifica el principio de "Proporcionar múltiples formas de representación"?',
+      opciones: [
+        'Exonerar a la estudiante de todas las sesiones de lectura y enviarla a la biblioteca durante esas horas.',
+        'Hacer que la estudiante escuche pasivamente cómo sus compañeros leen en voz alta sin permitirle tener el texto.',
+        'Ofrecer los textos en diversos formatos accesibles: macrotipos con tipografía ampliada y alto contraste, versiones de audio digital y apoyo con descripciones orales.',
+        'Solicitar a la familia que le enseñe a leer en su casa porque el aula regular no cuenta con docentes especializados.'
+      ],
+      correcta: 2,
+      explicacion: 'El principio de "Múltiples formas de representación" del DUA señala que los estudiantes difieren en la forma de percibir y comprender la información; por tanto, el docente debe brindar opciones perceptivas variadas (tamaño de texto, contraste, audio, apoyos táctiles) sin reducir el nivel del reto cognitivo.'
+    },
+    {
+      id: 17,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Atención a la diversidad e inclusión / DUA',
+      situacion: 'Para evaluar la comprensión de un problema histórico en cuarto grado, un docente ofrece a sus estudiantes la posibilidad de presentar sus conclusiones a través de un ensayo breve, una historieta gráfica, una dramatización en video o una exposición oral con esquema.',
+      pregunta: '¿A qué principio fundamental del Diseño Universal para el Aprendizaje (DUA) responde esta estrategia?',
+      opciones: [
+        'Proporcionar múltiples formas de acción y expresión.',
+        'Reducción de estándares de aprendizaje para estudiantes con dificultades.',
+        'Evaluación sumativa diferenciada por estrato socioeconómico.',
+        'Eliminación de criterios de evaluación compartidos.'
+      ],
+      correcta: 0,
+      explicacion: 'Proporcionar múltiples formas de acción y expresión (Principio 2 del DUA) significa otorgar a los estudiantes diversas alternativas y canales para demostrar lo que han aprendido, respetando sus ritmos, habilidades y estilos expresivos sin comprometer el rigor del propósito de aprendizaje.'
+    },
+    {
+      id: 18,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Atención a la diversidad e inclusión / DUA',
+      situacion: 'En una clase de primer grado, conviven estudiantes cuya lengua materna es el quechua con estudiantes monolingües en castellano. Algunos docentes sugieren que los niños quechuahablantes no deben hablar su lengua en la escuela para que aprendan más rápido el castellano.',
+      pregunta: '¿Qué postura pedagógica e inclusiva debe sostener el docente frente a esta sugerencia?',
+      opciones: [
+        'Aceptar la propuesta, ya que el castellano es la única lengua oficial en los trámites administrativos del país.',
+        'Rechazar la propuesta y fomentar el uso de la lengua originaria como vehículo legítimo de aprendizaje e identidad, aplicando el enfoque de Educación Intercultural Bilingüe (EIB).',
+        'Separar el aula en dos turnos: turno mañana para hispanohablantes y turno tarde para quechuahablantes.',
+        'Sancionar a los estudiantes que usen palabras en quechua en el patio de recreo.'
+      ],
+      correcta: 1,
+      explicacion: 'La diversidad lingüística y cultural es un derecho y una fortaleza de aprendizaje. La política de Educación Intercultural Bilingüe y el enfoque inclusivo del MINEDU prescriben que la lengua materna del estudiante debe ser fortalecida y valorada como base para el aprendizaje del castellano como segunda lengua.'
+    },
+    {
+      id: 19,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Convivencia democrática',
+      situacion: 'Durante la hora de educación física, dos estudiantes de quinto grado discuten violentamente por el turno para usar la cancha de vóley, llegando a insultarse y empujarse frente a sus compañeros.',
+      pregunta: 'Desde el enfoque de la convivencia escolar democrática y la disciplina positiva, ¿cuál es la intervención docente más pertinente?',
+      opciones: [
+        'Suspender a ambos estudiantes por tres días sin permitirles el ingreso a la institución educativa.',
+        'Hacer que se den la mano obligados en ese mismo instante y amenazarlos con bajarles puntos de conducta si vuelven a quejarse.',
+        'Intervenir con calma para detener la agresión, esperar que las emociones se sosieguen y propiciar un espacio de mediación donde ambos expresen cómo se sintieron, reconozcan el daño causado y acuerden fórmulas reparadoras para compartir la cancha.',
+        'Ignorar el conflicto argumentando que los niños deben aprender a solucionar sus diferencias a los golpes sin intervención de los adultos.'
+      ],
+      correcta: 2,
+      explicacion: 'El enfoque de la disciplina positiva y restaurativa en la escuela (Lineamientos de Convivencia Escolar del MINEDU) rechaza los castigos punitivos y busca que las partes en conflicto identifiquen sus emociones, asuman su responsabilidad y reparen el vínculo a través del diálogo reflexivo y la empatía.'
+    },
+    {
+      id: 20,
+      categoria: 'Conocimientos Pedagógicos',
+      subcategoria: 'Convivencia democrática',
+      situacion: 'Al comenzar el año escolar, un docente reflexiona sobre la mejor manera de establecer las normas de convivencia en su aula de segundo grado.',
+      pregunta: '¿Cuál de las siguientes acciones propicia un verdadero compromiso democrático y autorregulación del comportamiento en los estudiantes?',
+      opciones: [
+        'Traer impresas las normas elaboradas por la dirección del colegio y pegarlas en la pared exigiendo su cumplimiento estricto bajo advertencia de castigo.',
+        'Facilitar una asamblea donde los estudiantes identifiquen situaciones que dificultan el trabajo en equipo y propongan de forma consensuada acuerdos en positivo fundamentados en el respeto mutuo.',
+        'Permitir que cada estudiante haga lo que desee sin ningún tipo de límite para no reprimir su creatividad espontánea.',
+        'Elegir al estudiante de mejor promedio académico para que sea el fiscal del aula y sancione a quienes desobedezcan.'
+      ],
+      correcta: 1,
+      explicacion: 'La convivencia democrática se aprende cuando las normas son formuladas participativamente en asambleas de aula. Al reflexionar sobre la necesidad de los acuerdos para el bienestar colectivo y redactarlos en términos afirmativos, los estudiantes interiorizan el sentido ético de la norma.'
+    },
+
+    // ==========================================
+    // ÁREA 2: COMUNICACIÓN (18 preguntas)
+    // ==========================================
+    {
+      id: 21,
+      categoria: 'Comunicación',
+      subcategoria: 'Comprensión lectora',
+      situacion: 'Los estudiantes de cuarto grado leen una infografía sobre la "Puya Raimondi", una planta nativa de los Andes peruanos. En una de las secciones se consigna textualmente: "Florece únicamente una sola vez en su vida, cuando alcanza aproximadamente los 100 años de edad, produciendo más de 8 000 flores".',
+      pregunta: 'La docente formula la siguiente pregunta a los estudiantes: "¿A qué edad aproximadamente florece la Puya Raimondi según el texto?". ¿A qué nivel de comprensión lectora corresponde esta pregunta?',
+      opciones: [
+        'Nivel inferencial.',
+        'Nivel crítico-valorativo.',
+        'Nivel metacognitivo.',
+        'Nivel literal.'
+      ],
+      correcta: 3,
+      explicacion: 'La pregunta exige localizar información que se encuentra de manera explícita y directa en el texto sin necesidad de realizar deducciones ni interpretaciones complejas; por ende, corresponde estrictamente al nivel literal de comprensión lectora.'
+    },
+    {
+      id: 22,
+      categoria: 'Comunicación',
+      subcategoria: 'Comprensión lectora',
+      situacion: 'En una sesión de lectura de quinto grado se lee el siguiente fragmento de un cuento andino: "A pesar de que el cielo se tornó plomizo y las ramas de los queñuales comenzaron a silbar con furia, Julián apresuró el paso arreando a sus alpacas hacia el corral de piedras más cercano, asegurando bien la tranca de madera antes de que cayeran las primeras gotas heladas".',
+      pregunta: 'La docente pregunta: "¿Por qué Julián aceleró el paso y encerró rápidamente a sus alpacas?". Para responder adecuadamente, los estudiantes deben:',
+      opciones: [
+        'Copiar de manera textual las últimas palabras de la oración final del cuento.',
+        'Inferir la inminencia de una fuerte tormenta o granizada a partir de los indicios climáticos provistos en el texto (cielo plomizo, viento furioso, gotas heladas).',
+        'Opinar si les parece adecuado o inadecuado el uso del corral de piedras.',
+        'Contar la cantidad de signos de puntuación presentes en el fragmento.'
+      ],
+      correcta: 1,
+      explicacion: 'El texto no dice literalmente "había tormenta", pero ofrece pistas e indicios contextuales que el lector debe relacionar con sus saberes previos para deducir la causa que motivó la conducta del personaje; esto corresponde al nivel inferencial.'
+    },
+    {
+      id: 23,
+      categoria: 'Comunicación',
+      subcategoria: 'Comprensión lectora',
+      situacion: 'Estudiantes de sexto grado leen una carta abierta publicada por una empresa minera donde se afirma que "todas nuestras operaciones cumplen al 100% con los estándares internacionales y no generan absolutamente ningún impacto ambiental negativo en la cuenca del río".',
+      pregunta: '¿Cuál de las siguientes preguntas formuladas por la docente promueve el nivel de comprensión crítico-valorativo?',
+      opciones: [
+        '¿Quién es el emisor que firma la carta abierta?',
+        '¿Cuántas palabras contiene el segundo párrafo de la publicación?',
+        '¿Cuál crees que es la intención del autor al afirmar que no genera "ningún impacto negativo" y qué fuentes adicionales necesitaríamos consultar para contrastar dicha información de manera objetiva?',
+        '¿En qué fecha exacta fue difundida la carta en los medios locales?'
+      ],
+      correcta: 2,
+      explicacion: 'El nivel crítico-valorativo exige que el lector juzgue la validez, fiabilidad, intencionalidad y posibles sesgos del texto, contrastándolo con su propia escala de valores y buscando corroboración en fuentes alternas.'
+    },
+    {
+      id: 24,
+      categoria: 'Comunicación',
+      subcategoria: 'Comprensión lectora',
+      situacion: 'Antes de iniciar la lectura de una crónica sobre la festividad de la Virgen de la Candelaria, la docente muestra a los estudiantes de tercer grado únicamente la fotografía del traje de luces del caporal y el titular en letras destacadas.',
+      pregunta: '¿Qué estrategia pedagógica de lectura está desarrollando prioritariamente la docente en este momento previo?',
+      opciones: [
+        'Evaluación sumativa de la fluidez lectora.',
+        'Anticipación de hipótesis y activación de saberes previos.',
+        'Resumen por macroestructuras textuales.',
+        'Análisis morfosintáctico de oraciones subordinadas.'
+      ],
+      correcta: 1,
+      explicacion: 'En el momento "antes de la lectura", las estrategias fundamentales son la anticipación o predicción del contenido a partir de elementos paratextuales (títulos, imágenes) y la activación de saberes previos, lo cual despierta el interés y establece un propósito de lectura.'
+    },
+    {
+      id: 25,
+      categoria: 'Comunicación',
+      subcategoria: 'Comprensión lectora',
+      situacion: 'Durante la lectura compartida de un texto informativo sobre el ciclo del agua en cuarto grado, la docente nota que varios estudiantes se detienen confundidos al encontrar la palabra "precipitación".',
+      pregunta: '¿Cuál de las siguientes intervenciones docentes favorece el desarrollo de estrategias de monitoreo y autorregulación de la comprensión durante la lectura?',
+      opciones: [
+        'Pedirles que lean las oraciones que están antes y después de esa palabra, fijándose en qué sucede con el agua en las nubes cuando se enfría y cae a la tierra, para deducir su significado por el contexto.',
+        'Decirles de inmediato la definición del diccionario y exigirles que la copien cinco veces en su cuaderno.',
+        'Indicarles que salten esa palabra y continúen leyendo sin importar que no la entiendan.',
+        'Sancionarlos por no tener un vocabulario suficientemente avanzado para su grado.'
+      ],
+      correcta: 0,
+      explicacion: 'Guiar a los estudiantes para que empleen claves contextuales (releer el párrafo circundante, asociar ideas) promueve el desarrollo de lectores estratégicos y autónomos capaces de reparar sus propias fallas de comprensión durante el acto lector.'
+    },
+    {
+      id: 26,
+      categoria: 'Comunicación',
+      subcategoria: 'Comprensión lectora',
+      situacion: 'Los estudiantes de quinto grado analizan un afiche de salud pública que contiene una gráfica de barras con el número de contagios de dengue y un eslogan en la parte inferior: "Sin criaderos no hay zancudos; sin zancudos no hay dengue".',
+      pregunta: '¿Qué habilidad de lectura de textos continuos y discontinuos se pone en juego al relacionar la gráfica con el eslogan?',
+      opciones: [
+        'La memorización mecánica de cifras estadísticas aisladas.',
+        'La integración de información proveniente de múltiples formatos (gráfico y textual) para interpretar el mensaje global del afiche.',
+        'La transcripción caligráfica del texto.',
+        'La división silábica del eslogan.'
+      ],
+      correcta: 1,
+      explicacion: 'La lectura de textos mixtos o discontinuos (CNEB/PISA) exige integrar y contrastar la información expresada en lenguajes icónico-gráficos con la información verbal para construir una interpretación coherente y global del propósito comunicativo.'
+    },
+    {
+      id: 27,
+      categoria: 'Comunicación',
+      subcategoria: 'Producción de textos',
+      situacion: 'Los estudiantes de sexto grado han acordado redactar una carta formal al alcalde distrital para solicitar la instalación de contenedores de reciclaje cerca de la escuela. La docente inicia la sesión facilitando la fase de planificación del texto.',
+      pregunta: '¿Cuáles son las interrogantes clave que deben guiar a los estudiantes en esta etapa de planificación según el enfoque comunicativo?',
+      opciones: [
+        '¿Cuántas comas y puntos ortográficos debemos colocar obligatoriamente en cada renglón?',
+        '¿Para qué vamos a escribir la carta? ¿A quién estará dirigida? ¿Qué registro lingüístico es adecuado emplear y qué argumentos utilizaremos para convencerlo?',
+        '¿Cuál es el color de plumón más llamativo para decorar el sobre?',
+        '¿Qué calificación nos pondrá la docente si el texto es muy largo?'
+      ],
+      correcta: 1,
+      explicacion: 'La etapa de planificación (Flower y Hayes, CNEB) requiere clarificar los parámetros de la situación comunicativa: el propósito social del texto, el destinatario real, el registro lingüístico (formal/informal) y la selección y organización de las ideas centrales.'
+    },
+    {
+      id: 28,
+      categoria: 'Comunicación',
+      subcategoria: 'Producción de textos',
+      situacion: 'Un estudiante de tercer grado escribe el siguiente borrador de una anécdota: "Ayer fui al río con mi tío. Mi tío llevó una red. Había muchos peces. Los peces nadaban rápido. Entonces mi tío lanzó la red. La red se atrapó en una piedra. Mi tío se cayó al agua. Todos nos reímos".',
+      pregunta: 'La docente desea ayudar al estudiante a mejorar la cohesión y evitar las repeticiones innecesarias. ¿Cuál de las siguientes sugerencias pedagógicas es la más adecuada?',
+      opciones: [
+        'Borrar todo el texto y dictarle una anécdota escrita por ella misma.',
+        'Pedirle que lea su texto en voz alta y preguntarle: "¿Qué palabras se repiten muchas veces? ¿Cómo podríamos reemplazar \'mi tío\' o \'los peces\' usando pronombres o conectores como \'él\', \'estos\' o \'luego\' para que se lea con mayor fluidez?".',
+        'Colocarle nota C por falta de vocabulario técnico.',
+        'Subrayar con lápiz rojo cada una de las palabras repetidas y pedirle que no vuelva a cometer ese error.'
+      ],
+      correcta: 1,
+      explicacion: 'La mediación docente en la textualización y revisión fomenta el uso de recursos anafóricos (pronombres, elipsis, sinónimos) y conectores temporales a través de preguntas reflexivas, permitiendo al estudiante mejorar la cohesión de su producción manteniendo su propia voz.'
+    },
+    {
+      id: 29,
+      categoria: 'Comunicación',
+      subcategoria: 'Producción de textos',
+      situacion: 'Al momento de revisar los textos de sus estudiantes de cuarto grado, un docente suele dedicar la mayor parte del tiempo a corregir minuciosamente con bolígrafo rojo las faltas ortográficas y los errores de caligrafía, dejando de lado si el texto responde al propósito inicial o si las ideas están ordenadas lógicamente.',
+      pregunta: '¿Por qué esta práctica de revisión es pedagógicamente desaconsejada por el CNEB?',
+      opciones: [
+        'Porque en primaria la ortografía no tiene ninguna importancia.',
+        'Porque prioriza los aspectos formales superficiales por encima del sentido comunicativo global, la coherencia textual y la adecuación al destinatario, desmotivando además al autor del texto.',
+        'Porque la revisión debe ser realizada únicamente por los padres de familia en casa.',
+        'Porque solo las computadoras con corrector automático deben señalar faltas de ortografía.'
+      ],
+      correcta: 1,
+      explicacion: 'En el proceso de producción escrita, la revisión debe priorizar primero el nivel pragmático y semántico (¿cumple el propósito?, ¿se entiende?, ¿tiene ideas ordenadas?) antes del nivel normativo-ortográfico. La corrección docente invasiva anula la autorrevisión reflexiva del estudiante.'
+    },
+    {
+      id: 30,
+      categoria: 'Comunicación',
+      subcategoria: 'Producción de textos',
+      situacion: 'En una sesión de quinto grado sobre el texto argumentativo, los estudiantes deben defender una postura sobre si el uso de uniformes escolares debe seguir siendo obligatorio.',
+      pregunta: '¿Cuál de los siguientes enunciados redactados por un estudiante constituye una tesis adecuada para su texto argumentativo?',
+      opciones: [
+        'El uniforme escolar fue creado en el siglo XIX en Europa.',
+        'Considero que el uso del uniforme escolar no debería ser obligatorio porque limita la libertad de expresión de nuestra identidad y genera gastos innecesarios a las familias de bajos recursos.',
+        'En mi colegio usamos pantalón azul marino y chompa gris.',
+        'Ayer compré tres camisas blancas en la feria del distrito.'
+      ],
+      correcta: 1,
+      explicacion: 'Una tesis en un texto argumentativo es una postura u opinión fundamentada frente a un tema controvertido que puede ser defendida o rebatida con razones (argumentos). Las demás opciones son datos descriptivos o hechos fácticos que no suscitan debate.'
+    },
+    {
+      id: 31,
+      categoria: 'Comunicación',
+      subcategoria: 'Producción de textos',
+      situacion: 'Los estudiantes de segundo grado están escribiendo una receta de ensalada de frutas como texto instructivo. Un equipo ha escrito: "Se mezcla todo en un tazón grande y se lava la fruta antes de pelar las manzanas".',
+      pregunta: '¿Qué criterio de coherencia y estructura textual debe orientar la docente para que el equipo revise su texto?',
+      opciones: [
+        'El uso obligatorio de figuras literarias como la metáfora.',
+        'La secuencia cronológica lógica de las instrucciones (primero lavar, luego pelar y finalmente mezclar).',
+        'La inclusión de un glosario con términos culinarios en latín.',
+        'El cambio de letra cursiva a imprenta mayúscula.'
+      ],
+      correcta: 1,
+      explicacion: 'Los textos instructivos exigen una estricta secuencia temporal y procedimental para que el lector pueda alcanzar el objetivo previsto. Señalar la inversión lógica de acciones ayuda a consolidar la coherencia textual.'
+    },
+    {
+      id: 32,
+      categoria: 'Comunicación',
+      subcategoria: 'Alfabetización inicial',
+      situacion: 'En el aula de primer grado, la docente pide a Sofía que escriba la palabra "PELOTA". La niña escribe en su hoja: "E O A" y, al leer señalando con su dedito, dice: "PE" (señalando la E), "LO" (señalando la O) y "TA" (señalando la A).',
+      pregunta: 'De acuerdo con las investigaciones psicogenéticas de Emilia Ferreiro y Ana Teberosky, ¿en qué nivel de conceptualización de la escritura se encuentra Sofía?',
+      opciones: [
+        'Nivel presilábico.',
+        'Nivel silábico con valor sonoro convencional.',
+        'Nivel alfabético consolidado.',
+        'Nivel silábico sin valor sonoro convencional.'
+      ],
+      correcta: 1,
+      explicacion: 'Sofía asigna una grafía a cada sílaba oral de la palabra ("PE-LO-TA" = 3 sílabas -> 3 letras) y, además, las letras elegidas corresponden a las vocales pertinentes de cada sílaba (E para PE, O para LO, A para TA). Esto define inequívocamente el nivel silábico con valor sonoro convencional.'
+    },
+    {
+      id: 33,
+      categoria: 'Comunicación',
+      subcategoria: 'Alfabetización inicial',
+      situacion: 'Un estudiante de primer grado se encuentra en el nivel de transición silábico-alfabético. Al escribir la palabra "MARIPOSA", escribe: "MA I P S A".',
+      pregunta: '¿Cuál de las siguientes intervenciones docentes brinda el andamiaje más adecuado para que el estudiante avance hacia el nivel alfabético?',
+      opciones: [
+        'Felicitarlo y decirle que ya no necesita escribir nada más porque ya sabe leer perfectamente.',
+        'Hacer que repita en voz alta la palabra alargando los sonidos: "/m-a-r-i-p-o-s-a/", y preguntarle: "En la parte \'RI\', ¿qué sonido escuchas después de la \'r\'? En \'SO\', ¿qué letra acompaña a la \'s\' para que suene \'so\' y no solo \'s\'?".',
+        'Borrarle la palabra con fuerza y ponerle una plana completa de la palabra MARIPOSA.',
+        'Hacer que copie la palabra desde una cartilla sin pensar en los sonidos.'
+      ],
+      correcta: 1,
+      explicacion: 'En el nivel silábico-alfabético, el estudiante escribe algunas sílabas completas y otras con una sola letra. El andamiaje docente consiste en estirar los fonemas orales y formular preguntas reflexivas para que perciba los fonemas omitidos y complete la estructura alfabética.'
+    },
+    {
+      id: 34,
+      categoria: 'Comunicación',
+      subcategoria: 'Alfabetización inicial',
+      situacion: 'Una docente de primer grado desarrolla actividades de conciencia fonológica antes de exigir la escritura formal de palabras complejas.',
+      pregunta: '¿Cuál de las siguientes actividades fomenta directamente la conciencia fonológica en los niños?',
+      opciones: [
+        'Cantar rimas, adivinar con qué sonido empieza una palabra (p. ej., "¿qué cosas del aula empiezan con /s/?") y dar palmadas por cada sílaba pronunciada.',
+        'Hacer planas de trazos y círculos repetitivos durante dos horas.',
+        'Copiar del libro las letras del abecedario sin pronunciar ningún sonido.',
+        'Memorizar las reglas de tildación diacrítica.'
+      ],
+      correcta: 0,
+      explicacion: 'La conciencia fonológica es la habilidad metalingüística que permite reflexionar y manipular los sonidos del habla (rimas, sílabas, fonemas) de manera lúdica y oral, siendo un predictor decisivo para el aprendizaje exitoso de la lectura y la escritura.'
+    },
+    {
+      id: 35,
+      categoria: 'Comunicación',
+      subcategoria: 'Alfabetización inicial',
+      situacion: 'En una institución educativa, dos docentes debaten sobre cómo enseñar a leer en primer grado. El docente A propone utilizar cartillas silábicas tradicionales con "ma-me-mi-mo-mu" y oraciones descontextualizadas como "Mi mamá me mima". La docente B propone utilizar textos reales y significativos del entorno de los niños (etiquetas, cuentos, canciones, listas de compras, nombres propios).',
+      pregunta: 'Según el enfoque comunicativo textual del CNEB, ¿cuál de las dos posturas es la pedagógicamente pertinente?',
+      opciones: [
+        'La postura del docente A, porque la repetición mecánica de sílabas aisladas es el único método científico comprobado.',
+        'La postura de la docente B, porque los niños aprenden a leer y escribir interactuando con textos auténticos que cumplen funciones comunicativas reales en su vida social.',
+        'Ninguna de las dos posturas, ya que en primer grado no se debe enseñar a leer.',
+        'La postura del docente A, porque los textos reales confunden a los niños.'
+      ],
+      correcta: 1,
+      explicacion: 'El CNEB asume el enfoque comunicativo y las investigaciones psicogenéticas que demuestran que los niños se alfabetizan cuando descubren la función social del lenguaje escrito a través de situaciones reales de comunicación y textos completos y significativos, y no mediante el deletreo descontextualizado.'
+    },
+    {
+      id: 36,
+      categoria: 'Comunicación',
+      subcategoria: 'Oralidad',
+      situacion: 'Durante una asamblea de aula de tercer grado, los estudiantes escuchan las propuestas de dos candidatos a delegado escolar. La docente observa que algunos niños interrumpen constantemente al expositor o miran hacia otro lado.',
+      pregunta: '¿Qué pauta pedagógica debe promover la docente para desarrollar la escucha activa en sus estudiantes?',
+      opciones: [
+        'Expulsar del aula a quienes no miren al expositor.',
+        'Recordar la importancia de mantener contacto visual con el hablante, esperar que concluya su idea antes de intervenir y resumir con sus propias palabras lo que comprendieron de la propuesta antes de refutarla.',
+        'Obligar a los estudiantes a permanecer con la boca tapada durante toda la asamblea.',
+        'Decidir ella misma al ganador para evitar que los estudiantes sigan hablando.'
+      ],
+      correcta: 1,
+      explicacion: 'La escucha activa implica habilidades comunicativas de atención, respeto por los turnos de habla, toma de apuntes o retención mental y parafraseo de lo expresado por el interlocutor, pilares fundamentales de la competencia "Se comunica oralmente en su lengua materna".'
+    },
+    {
+      id: 37,
+      categoria: 'Comunicación',
+      subcategoria: 'Oralidad',
+      situacion: 'Un estudiante de quinto grado va a realizar una exposición oral sobre los animales en peligro de extinción en el Perú. Durante el ensayo previo, el estudiante habla con la cabeza agachada, en voz muy baja y leyendo mecánicamente una hoja llena de texto sin mirar al público.',
+      pregunta: '¿Cuál de las siguientes sugerencias docentes atiende al desarrollo de recursos no verbales y paraverbales de la oralidad?',
+      opciones: [
+        'Decirle que memorice palabra por palabra la hoja para que no tenga que leerla.',
+        'Proponerle que prepare un esquema o tarjetas con palabras clave, ensayar modulando el volumen y tono de voz para mantener el interés de sus compañeros y mantener una postura erguida mirando a su audiencia.',
+        'Reemplazar la exposición por un trabajo escrito para evitarle la vergüenza de hablar.',
+        'Criticar su timidez frente a toda la clase para obligarlo a superarla.'
+      ],
+      correcta: 1,
+      explicacion: 'La competencia oral requiere el dominio de recursos paraverbales (volumen, entonación, ritmo, pausas) y no verbales (gestos, postura corporal, contacto visual), así como el empleo de apoyos sintéticos para hablar con soltura sin depender de la lectura pasiva.'
+    },
+    {
+      id: 38,
+      categoria: 'Comunicación',
+      subcategoria: 'Oralidad',
+      situacion: 'En un debate de sexto grado sobre la contaminación por plástico, un estudiante dice a otro: "Tu argumento no vale nada porque tú compras gaseosas en botella plástica y no sabes nada de ecología".',
+      pregunta: 'La docente interviene inmediatamente para reconducir el debate hacia una argumentación ética y democrática. ¿Cuál debe ser su intervención?',
+      opciones: [
+        'Agradecer el comentario y burlarse del compañero atacado.',
+        'Explicar al estudiante que en un debate se deben refutar las ideas y argumentos con datos y razones comprobables, y no atacar a la persona mediante descalificaciones personales (falacia ad hominem).',
+        'Dar por concluido el debate y no volver a organizar discusiones orales.',
+        'Otorgarle la victoria al estudiante más agresivo por demostrar mayor firmeza.'
+      ],
+      correcta: 1,
+      explicacion: 'En la formación ciudadana y comunicativa, el docente enseña a diferenciar la refutación de ideas con base en evidencias de los ataques personales (ad hominem), fomentando el respeto mutuo y la solvencia argumentativa.'
+    },
+
+    // ==========================================
+    // ÁREA 3: MATEMÁTICA (17 preguntas)
+    // ==========================================
+    {
+      id: 39,
+      categoria: 'Matemática',
+      subcategoria: 'Resolución de problemas',
+      situacion: 'Un docente de cuarto grado presenta el siguiente problema: "Un agricultor cosechó 1 450 sacos de papa y vendió una parte en el mercado mayorista. Si ahora le quedan 380 sacos, ¿cuántos sacos de papa vendió?". Al ver que varios niños intentan adivinar la operación sumando las dos cantidades de inmediato, el docente detiene la clase.',
+      pregunta: 'Según las fases de resolución de problemas de George Polya, ¿qué acción debe propiciar el docente para garantizar la primera fase ("Comprender el problema")?',
+      opciones: [
+        'Escribir directamente la operación de sustracción en la pizarra y ordenar que la copien.',
+        'Pedirles que expliquen el problema con sus propias palabras, identifiquen los datos que se conocen (total inicial y lo que queda), distingan qué es lo que se pide averiguar y representen la situación gráficamente.',
+        'Darles la calculadora para que encuentren el número rápidamente.',
+        'Calificar con cero a quienes intentaron sumar sin haber reflexionado.'
+      ],
+      correcta: 1,
+      explicacion: 'La fase de comprensión del problema (Polya) no consiste en buscar números para operar a ciegas, sino en verbalizar la situación con palabras propias, discriminar datos conocidos de la incógnita y visualizar las relaciones entre las partes y el todo.'
+    },
+    {
+      id: 40,
+      categoria: 'Matemática',
+      subcategoria: 'Resolución de problemas',
+      situacion: 'Una docente de segundo grado va a introducir el algoritmo de la adición con canje (reagrupación de decenas). Siguiendo el principio de la progresión de representaciones de Jerome Bruner (concreto - pictórico - simbólico), ¿cuál es la ruta pedagógica adecuada?',
+      opciones: [
+        'Enseñar primero la fórmula matemática abstracta en el cuaderno, luego hacer dibujos y finalmente jugar con material concreto si sobra tiempo.',
+        'Manipular material concreto estructurado (Base Diez o regletas) canjeando 10 unidades por 1 barra de decena, luego dibujar la representación en cuadrículas o esquemas gráficos, y finalmente registrar el algoritmo numérico convencional.',
+        'Aprender de memoria la tabla de sumas del 1 al 100 mediante repetición coral.',
+        'Usar únicamente la calculadora digital para evitar el cansancio mental de los niños.'
+      ],
+      correcta: 1,
+      explicacion: 'El enfoque centrado en la resolución de problemas (CNEB) y las teorías del aprendizaje matemático (Bruner, Brousseau) establecen la necesidad de transitar de lo vivencial y concreto a lo pictórico-gráfico y culminar en la formalización simbólica abstracta.'
+    },
+    {
+      id: 41,
+      categoria: 'Matemática',
+      subcategoria: 'Resolución de problemas',
+      situacion: 'En quinto grado se presenta el siguiente reto: "Un autobús sale del paradero inicial con cierta cantidad de pasajeros. En el primer paradero suben 12 personas. En el segundo paradero bajan 8 personas. En el tercer paradero suben 5 personas y el autobús llega a la estación final con 34 pasajeros. ¿Con cuántos pasajeros salió inicialmente?".',
+      pregunta: '¿Cuál es la estrategia heurística más eficiente que los estudiantes pueden aplicar para resolver esta situación?',
+      opciones: [
+        'La estrategia de ensayar números al azar durante una hora.',
+        'La estrategia de "trabajar hacia atrás" (operaciones inversas o método del cangrejo), partiendo del número final (34) y retrocediendo con operaciones contrarias (-5, +8, -12).',
+        'Sumar todos los números del problema sin importar su sentido: 12 + 8 + 5 + 34.',
+        'Concluir que el problema carece de solución matemática por falta de datos.'
+      ],
+      correcta: 1,
+      explicacion: 'La heurística de "trabajar hacia atrás" o método de las operaciones inversas es la estrategia matemática idónea cuando se conoce el estado final de una secuencia de transformaciones y se busca determinar el estado inicial desconocido.'
+    },
+    {
+      id: 42,
+      categoria: 'Matemática',
+      subcategoria: 'Resolución de problemas',
+      situacion: 'Para conectar la matemática con el contexto sociocultural en una escuela de la costa norte, el docente propone calcular el costo de los ingredientes y el porcentaje de ganancia en la preparación de tamales para la feria patronal de la comunidad.',
+      pregunta: '¿Por qué esta situación responde fielmente al Enfoque Centrado en la Resolución de Problemas del CNEB?',
+      opciones: [
+        'Porque plantea situaciones problemáticas situadas en contextos reales y auténticos, permitiendo que la matemática adquiera significado y utilidad práctica para la toma de decisiones ciudadanas y económicas.',
+        'Porque es una excusa para no cumplir con los contenidos abstractos del libro de texto.',
+        'Porque los tamales son el único tema de matemática evaluado en las pruebas internacionales.',
+        'Porque evita que los estudiantes tengan que pensar en operaciones numéricas complejas.'
+      ],
+      correcta: 0,
+      explicacion: 'El CNEB postula que la matemática se aprende resolviendo problemas extraídos de la realidad concreta, donde las cantidades, unidades monetarias y proporcionalidades adquieren un sentido funcional, movilizando capacidades de modelación y argumentación.'
+    },
+    {
+      id: 43,
+      categoria: 'Matemática',
+      subcategoria: 'Resolución de problemas',
+      situacion: 'Al finalizar un problema en el que se calculaba cuántos buses de 40 asientos se necesitan para transportar a 145 estudiantes a un paseo de estudio, un estudiante obtiene mediante la división 145 / 40 = 3,625 y afirma: "Se necesitan 3 buses y medio de un bus".',
+      pregunta: '¿Qué proceso metacognitivo de reflexión matemática necesita fortalecer el estudiante?',
+      opciones: [
+        'La memorización mecánica de la tabla del 4.',
+        'La contrastación y validación del resultado numérico frente a las condiciones de la realidad cotidiana (no se pueden alquilar fracciones de autobús; por ende, se requieren 4 buses completos para no dejar a nadie).',
+        'La caligrafía de los números decimales.',
+        'La rapidez para operar sumas sin importar el sentido de las unidades.'
+      ],
+      correcta: 1,
+      explicacion: 'La última fase de Polya ("Examinar la solución obtenida") exige interpretar el resultado en el contexto de la situación real. El sentido común y el razonamiento matemático dictan redondear al entero superior por exceso ante la imposibilidad física de fletar fracciones de vehículo.'
+    },
+    {
+      id: 44,
+      categoria: 'Matemática',
+      subcategoria: 'Cantidad y operaciones',
+      situacion: 'Un estudiante de sexto grado afirma con mucha seguridad: "La multiplicación SIEMPRE da como resultado un número mayor que los números que se están multiplicando".',
+      pregunta: '¿Cuál de los siguientes contraejemplos matemáticos es el más adecuado para evidenciar el error en la afirmación del estudiante?',
+      opciones: [
+        'Multiplicar 12 x 10 = 120.',
+        'Multiplicar 24 x 0,5 = 12 (donde el producto 12 es menor que uno de los factores, 24).',
+        'Multiplicar 5 x 5 = 25.',
+        'Multiplicar 100 x 2 = 200.'
+      ],
+      correcta: 1,
+      explicacion: 'La creencia de que "multiplicar siempre agranda" es una concepción alternativa típica surgida del trabajo exclusivo con números naturales. Al multiplicar por una fracción propia o decimal menor a la unidad (como 0,5 o 1/2), el producto obtenido resulta menor que el factor inicial.'
+    },
+    {
+      id: 45,
+      categoria: 'Matemática',
+      subcategoria: 'Cantidad y operaciones',
+      situacion: 'Analice el siguiente problema presentado en tercer grado: "Rosa tenía 48 ovejas en su corral. Llegó su hermana con otro grupo de ovejas y las juntaron. Ahora en el corral hay 82 ovejas en total. ¿Cuántas ovejas trajo su hermana?".',
+      pregunta: '¿A qué estructura de Problemas Aritméticos de Enunciado Verbal (PAEV) corresponde esta situación?',
+      opciones: [
+        'Problema de Cambio 1 (se conoce inicio y aumento, se busca el final).',
+        'Problema de Comparación 3 (diferencia desconocida con referente mayor).',
+        'Problema de Cambio 3 (se conoce cantidad inicial y cantidad final aumentada, la incógnita es la transformación o cambio).',
+        'Problema de Igualación 6.'
+      ],
+      correcta: 2,
+      explicacion: 'En la clasificación de los PAEV aditivos, los problemas de Cambio implican una modificación dinámica en el tiempo sobre una misma colección. Cuando se conoce la cantidad inicial (48) y la cantidad final tras el aumento (82), pero se desconoce la magnitud del cambio operado, corresponde a Cambio 3.'
+    },
+    {
+      id: 46,
+      categoria: 'Matemática',
+      subcategoria: 'Cantidad y operaciones',
+      situacion: 'En una sesión de cuarto grado sobre fracciones equivalentes, el docente entrega a cada equipo tiras rectangulares de papel de la misma longitud. Les pide doblar una tira en 2 partes iguales, otra en 4 partes iguales y otra en 8 partes iguales.',
+      pregunta: '¿Cuál es el propósito pedagógico fundamental de esta actividad con material manipulativo?',
+      opciones: [
+        'Hacer que los estudiantes se cansen doblando papeles para que guarden silencio.',
+        'Constatar visual y táctilmente que 1/2, 2/4 y 4/8 representan exactamente la misma porción de la unidad a pesar de tener numeradores y denominadores distintos.',
+        'Demostrar que la fracción 4/8 es 4 veces más grande en superficie que 1/2.',
+        'Enseñar a cortar tiras con tijera sin fines matemáticos.'
+      ],
+      correcta: 1,
+      explicacion: 'El uso de las tiras de fracciones permite construir el concepto de equivalencia fraccionaria como la relación entre la cantidad de partes y el tamaño de cada parte respecto al mismo todo, antes de enseñar la regla algorítmica de simplificación o amplificación.'
+    },
+    {
+      id: 47,
+      categoria: 'Matemática',
+      subcategoria: 'Cantidad y operaciones',
+      situacion: 'Una docente de tercer grado plantea dos problemas a sus estudiantes:\nProblema A: "Tengo 20 semillas y las reparto en partes iguales entre 4 macetas. ¿Cuántas semillas pongo en cada maceta?".\nProblema B: "Tengo 20 semillas y pongo 4 semillas en cada maceta. ¿Cuántas macetas necesito?".',
+      pregunta: '¿Qué distinción conceptual de la división está trabajando la docente entre ambos problemas?',
+      opciones: [
+        'En el Problema A se trabaja la división como reparto equitativo (partición), mientras que en el Problema B se trabaja la división como agrupamiento o cuotición.',
+        'Ambos problemas representan exactamente la misma operación sin ninguna diferencia cognitiva.',
+        'El Problema A es una multiplicación y el Problema B es una resta sin relación.',
+        'El Problema B no se puede resolver mediante división.'
+      ],
+      correcta: 0,
+      explicacion: 'La división posee dos significados fundamentales: reparto equitativo o partitivo (se conoce el número de grupos y se busca el tamaño de cada parte) y agrupamiento o cuotición (se conoce el tamaño de cada grupo y se busca cuántos grupos se pueden formar).'
+    },
+    {
+      id: 48,
+      categoria: 'Matemática',
+      subcategoria: 'Regularidad, equivalencia y cambio',
+      situacion: 'En un aula de primer grado, los estudiantes arman un collar con cuentas de colores siguiendo la secuencia: Rojo, Azul, Azul, Verde, Rojo, Azul, Azul, Verde, Rojo, Azul, Azul...',
+      pregunta: 'Para que los estudiantes identifiquen el núcleo del patrón de repetición, la docente debe promover que:',
+      opciones: [
+        'Pinten todas las cuentas de un solo color para no confundirse.',
+        'Aíslen la parte mínima que se repite de manera periódica y regular (Rojo, Azul, Azul, Verde) y anticipen qué color continuará a continuación.',
+        'Cuenten el número total de cuentas sin fijarse en los colores.',
+        'Desarmen el collar porque los patrones no corresponden a primer grado.'
+      ],
+      correcta: 1,
+      explicacion: 'En la competencia "Resuelve problemas de regularidad, equivalencia y cambio", la noción básica de patrón de repetición requiere que el estudiante reconozca la unidad mínima o núcleo del patrón que genera la serie cíclica para poder predecir elementos futuros.'
+    },
+    {
+      id: 49,
+      categoria: 'Matemática',
+      subcategoria: 'Regularidad, equivalencia y cambio',
+      situacion: 'Para introducir el concepto de ecuación y valor desconocido en quinto grado, el docente utiliza una balanza de dos platillos en equilibrio. En el platillo izquierdo hay una bolsa opaca con canicas (cantidad desconocida "x") y 3 canicas sueltas. En el platillo derecho hay 11 canicas sueltas idénticas.',
+      pregunta: '¿Qué acción física en la balanza modela adecuadamente el principio algebraico de conservación de la equivalencia?',
+      opciones: [
+        'Agregar 5 canicas al platillo izquierdo sin tocar el platillo derecho.',
+        'Retirar 3 canicas de ambos platillos simultáneamente para que la balanza permanezca en equilibrio y la bolsa quede sola con el equivalente a 8 canicas.',
+        'Vaciar ambos platillos al piso y contar las canicas juntas.',
+        'Poner más peso en el platillo derecho hasta que se incline totalmente.'
+      ],
+      correcta: 1,
+      explicacion: 'La balanza de platillos es un modelo concreto de la igualdad matemática. La propiedad fundamental de las igualdades establece que si se aplica la misma operación en ambos miembros (restar 3 a ambos lados), la equivalencia no se altera, permitiendo despejar la incógnita (x = 11 - 3 = 8).'
+    },
+    {
+      id: 50,
+      categoria: 'Matemática',
+      subcategoria: 'Regularidad, equivalencia y cambio',
+      situacion: 'En sexto grado, los estudiantes resuelven la siguiente situación: "Para preparar una jarra de chicha morada para 6 personas se necesitan 1/2 kilo de maíz morado y 2 manzanas. Si queremos preparar la misma bebida para 18 personas manteniendo el mismo sabor, ¿cuántos kilos de maíz morado y cuántas manzanas necesitaremos?".',
+      pregunta: '¿Qué razonamiento proporcional directo deben movilizar los estudiantes?',
+      opciones: [
+        'Sumar 18 + 6 = 24 a todos los ingredientes.',
+        'Identificar que la cantidad de personas se triplica (18 = 6 x 3); por lo tanto, la constante de proporcionalidad exige triplicar también cada uno de los ingredientes: 3/2 de kilo (1,5 kg) de maíz y 6 manzanas.',
+        'Restar la cantidad de manzanas del maíz morado.',
+        'Mantener los mismos ingredientes porque el sabor no cambia con más agua.'
+      ],
+      correcta: 1,
+      explicacion: 'El razonamiento de proporcionalidad directa implica reconocer la relación multiplicativa escalar constante (factor multiplicador x3) entre las magnitudes correlacionadas (número de comensales e insumos).'
+    },
+    {
+      id: 51,
+      categoria: 'Matemática',
+      subcategoria: 'Forma, movimiento y localización',
+      situacion: 'En cuarto grado, los estudiantes trabajan con geoplanos elásticos para construir cuadriláteros. La docente les pide construir un cuadrilátero que tenga dos pares de lados paralelos y cuyos cuatro ángulos interiores sean rectos (90°), pero que NO tenga sus cuatro lados iguales.',
+      pregunta: '¿Qué figura geométrica están construyendo los estudiantes según estas propiedades específicas?',
+      opciones: [
+        'Un trapecio escaleno.',
+        'Un rombo.',
+        'Un rectángulo no cuadrado.',
+        'Un triángulo equilátero.'
+      ],
+      correcta: 2,
+      explicacion: 'El rectángulo posee dos pares de lados paralelos iguales dos a dos y cuatro ángulos rectos de 90°. Si tuviera sus cuatro lados de igual longitud, sería un cuadrado (caso particular de rectángulo).'
+    },
+    {
+      id: 52,
+      categoria: 'Matemática',
+      subcategoria: 'Forma, movimiento y localización',
+      situacion: 'En una sesión de orientación espacial en tercer grado, los estudiantes dibujan en una cuadrícula el recorrido desde su escuela hasta la posta médica comunal.',
+      pregunta: '¿Cuál de las siguientes consignas favorece el uso pertinente del lenguaje geométrico de desplazamiento y localización?',
+      opciones: [
+        'Camina un montón para allá y doblas donde veas una casa bonita.',
+        'Avanza 3 cuadrículas hacia el Este, gira 90° en sentido horario hacia el Sur y avanza 4 cuadrículas en línea recta.',
+        'Dibuja flechas desordenadas por toda la hoja sin ninguna escala.',
+        'Mira hacia el techo y da vueltas en círculos.'
+      ],
+      correcta: 1,
+      explicacion: 'La competencia "Resuelve problemas de forma, movimiento y localización" exige expresar recorridos y trayectorias empleando referencias espaciales precisas (puntos cardinales, giros en ángulos rectos y unidades de cuadrícula).'
+    },
+    {
+      id: 53,
+      categoria: 'Matemática',
+      subcategoria: 'Forma, movimiento y localización',
+      situacion: 'Una docente de quinto grado entrega papel cuadriculado a los estudiantes y les pide dibujar varios rectángulos diferentes que tengan exactamente un perímetro de 20 unidades. Luego les pide calcular el área interior de cada uno.',
+      pregunta: '¿Cuál es el hallazgo conceptual clave que los estudiantes descubren con esta experiencia geométrica?',
+      opciones: [
+        'Que todas las figuras con el mismo perímetro tienen exactamente la misma área.',
+        'Que figuras con idéntico perímetro pueden tener áreas sustancialmente distintas (p. ej., un rectángulo de 1x9 tiene área 9, mientras que uno de 5x5 tiene área 25), diferenciando con claridad el contorno de la superficie.',
+        'Que el perímetro y el área se miden con las mismas unidades cuadradas.',
+        'Que no es posible dibujar rectángulos distintos con el mismo perímetro.'
+      ],
+      correcta: 1,
+      explicacion: 'Uno de los obstáculos cognitivos más frecuentes en primaria es la confusión entre perímetro (magnitud unidimensional de longitud) y área (magnitud bidimensional de superficie). Esta actividad desmitifica la supuesta relación de dependencia directa entre ambas magnitudes.'
+    },
+    {
+      id: 54,
+      categoria: 'Matemática',
+      subcategoria: 'Gestión de datos e incertidumbre',
+      situacion: 'Los estudiantes de sexto grado han recogido datos sobre la cantidad de kilogramos de residuos plásticos recolectados por las secciones "A" y "B" durante cuatro semanas. Han elaborado un gráfico de barras dobles para comparar ambos grupos.',
+      pregunta: '¿Cuál de las siguientes preguntas formuladas por la docente exige un nivel de interpretación y análisis crítico de la información estadística más allá de la lectura literal?',
+      opciones: [
+        '¿Cuántos kilos recolectó la sección A en la primera semana?',
+        '¿Cuál fue la sección que mostró una tendencia constante al incremento en la recolección a lo largo de las cuatro semanas y a qué factores organizativos podría atribuirse ese comportamiento según lo conversado en el aula?',
+        '¿De qué color están pintadas las barras de la sección B?',
+        '¿Cuántas semanas duró la campaña en total?'
+      ],
+      correcta: 1,
+      explicacion: 'En la competencia de gestión de datos, el nivel más avanzado (Curcio, CNEB) es "leer detrás de los datos", lo que implica identificar tendencias evolutivas, formular hipótesis explicativas y tomar decisiones informadas a partir de la evidencia estadística.'
+    },
+    {
+      id: 55,
+      categoria: 'Matemática',
+      subcategoria: 'Gestión de datos e incertidumbre',
+      situacion: 'En una bolsa oscura opaca, el docente coloca 9 fichas rojas idénticas y 1 sola ficha azul. Pide a un estudiante de cuarto grado que extraiga una ficha sin mirar.',
+      pregunta: '¿Qué noción intuitiva de probabilidad se evidencia de manera correcta en el análisis de esta experiencia?',
+      opciones: [
+        'Es imposible sacar una ficha roja.',
+        'Es seguro que saldrá la ficha azul en el primer intento.',
+        'Es altamente probable que salga una ficha roja y poco probable (aunque no imposible) que salga la ficha azul, debido a la diferencia en la cantidad de elementos en el espacio muestral.',
+        'Ambas fichas tienen exactamente la misma probabilidad de salir porque están en la misma bolsa.'
+      ],
+      correcta: 2,
+      explicacion: 'En el ciclo IV de primaria se introducen las nociones cualitativas de probabilidad ("seguro", "muy probable", "poco probable" e "imposible") comparando la frecuencia relativa de eventos en situaciones lúdicas aleatorias.'
+    },
+
+    // ==========================================
+    // ÁREA 4: PERSONAL SOCIAL (10 preguntas)
+    // ==========================================
+    {
+      id: 56,
+      categoria: 'Personal Social',
+      subcategoria: 'Construcción de identidad y autonomía',
+      situacion: 'Durante un juego de mesa cooperativo en segundo grado, a un estudiante se le cae su torre de bloques por un tropiezo accidental. El niño se enfurece, grita con el rostro enrojecido, patea los bloques y se encierra debajo de una mesa llorando.',
+      pregunta: '¿Cuál de las siguientes acciones docentes promueve de manera asertiva la autorregulación emocional en el estudiante?',
+      opciones: [
+        'Gritarle con voz más fuerte para que aprenda a respetar a sus compañeros y amenazarlo con no salir al recreo.',
+        'Acercarse con voz suave, ponerse a su altura física, validar su emoción ("Veo que te sientes muy frustrado y enojado porque se cayó tu torre"), acompañarlo a respirar profundamente para recuperar la calma y dialogar con él para reconstruir juntos la torre.',
+        'Dejarlo llorar solo todo el día sin prestarle atención para que no se acostumbre a engreimientos.',
+        'Obligarlo a pedir perdón de inmediato delante de todos sin permitirle expresar lo que siente.'
+      ],
+      correcta: 1,
+      explicacion: 'La competencia "Construye su identidad" implica reconocer y autorregular las propias emociones. El docente debe actuar como un regulador externo mediante la validación empática de la emoción sentida, técnicas de respiración consciente y la búsqueda conjunta de alternativas constructivas.'
+    },
+    {
+      id: 57,
+      categoria: 'Personal Social',
+      subcategoria: 'Construcción de identidad y autonomía',
+      situacion: 'Una estudiante de tercer grado muy tímida suele decir: "Yo no sirvo para nada en el colegio porque no puedo resolver las sumas rápido como Camila".',
+      pregunta: '¿Cómo debe intervenir la docente para fortalecer el autoconcepto y la autoestima de la estudiante?',
+      opciones: [
+        'Darle la razón y sugerirle que solo se dedique a dibujar en su casa.',
+        'Ayudarla a reconocer sus talentos individuales únicos (p. ej., su creatividad, empatía o habilidad artística), explicarle que las personas aprenden a ritmos distintos y plantearle metas pequeñas y alcanzables para reforzar su autoeficacia.',
+        'Compararla con los demás compañeros para ver si se esfuerza por competir.',
+        'Ignorar su comentario porque la autoestima no forma parte del currículo escolar.'
+      ],
+      correcta: 1,
+      explicacion: 'El fortalecimiento de la autoestima y el autoconcepto positivo requiere valorar la singularidad de cada persona, desmontar comparaciones destructivas y generar experiencias de éxito progresivo que construyan el sentido de autoeficacia.'
+    },
+    {
+      id: 58,
+      categoria: 'Personal Social',
+      subcategoria: 'Construcción de identidad y autonomía',
+      situacion: 'En una sesión de tutoría de quinto grado, los estudiantes analizan el siguiente dilema moral: "Un compañero encontró en el piso del salón un billete de 20 soles que se le cayó a una niña humilde para su almuerzo. El compañero pensó en quedárselo para comprar figuritas coleccionables, pero finalmente decidió devolverlo porque temía que la profesora lo descubriera y lo castigara".',
+      pregunta: 'Según la teoría del desarrollo moral de Lawrence Kohlberg, ¿en qué nivel de razonamiento moral se encuentra el compañero de la historia?',
+      opciones: [
+        'Nivel convencional (orientado a las expectativas interpersonales).',
+        'Nivel posconvencional (orientado a principios éticos universales de justicia).',
+        'Nivel preconvencional (orientación hacia la obediencia y el temor al castigo).',
+        'Nivel autónomo consolidado.'
+      ],
+      correcta: 2,
+      explicacion: 'En el nivel preconvencional (Kohlberg), el individuo juzga lo bueno o lo malo en función de las consecuencias físicas inmediatas sobre su persona (evitar el castigo físico o la sanción de la autoridad), sin internalizar aún la norma moral ni la empatía hacia el prójimo.'
+    },
+    {
+      id: 59,
+      categoria: 'Personal Social',
+      subcategoria: 'Construcción de identidad y autonomía',
+      situacion: 'Durante la hora del recreo en cuarto grado, un grupo de niños impide que tres compañeras jueguen fútbol en la losa deportiva diciendo: "El fútbol es juego exclusivo de hombres, las mujeres solo deben jugar a las muñecas o sentarse a conversar".',
+      pregunta: 'Bajo el Enfoque de Igualdad de Género del CNEB, ¿cuál es la acción pedagógica más pertinente?',
+      opciones: [
+        'Apoyar a los niños diciendo que tienen razón porque las mujeres se pueden golpear con la pelota.',
+        'Prohibir el fútbol en toda la escuela para que nadie juegue.',
+        'Abrir un espacio de diálogo reflexivo en el aula sobre los estereotipos de género, analizando que los deportes y habilidades no tienen género y estableciendo acuerdos para el uso equitativo y compartido de los espacios deportivos.',
+        'Obligar a los niños a jugar a las muñecas como castigo disciplinario.'
+      ],
+      correcta: 2,
+      explicacion: 'El enfoque de igualdad de género busca deconstruir roles y estereotipos sexistas arraigados culturalmente, promoviendo la igualdad de oportunidades, la no discriminación y el acceso equitativo de niños y niñas a todos los espacios de recreación y aprendizaje.'
+    },
+    {
+      id: 60,
+      categoria: 'Personal Social',
+      subcategoria: 'Convivencia y participación democrática',
+      situacion: 'Con motivo de las elecciones del Municipio Escolar en sexto grado, una lista candidata propone comprar consolas de videojuegos para el salón y regalar golosinas a quienes voten por ellos, mientras que otra lista propone organizar brigadas ecológicas y gestionar libros ante la municipalidad.',
+      pregunta: '¿Cómo debe orientar el docente el debate electoral escolar para fortalecer la deliberación democrática sobre asuntos públicos?',
+      opciones: [
+        'Permitir el intercambio de votos por golosinas como una práctica normal de la política.',
+        'Propiciar un espacio de análisis crítico donde los estudiantes evalúen la viabilidad, el bien común y la sostenibilidad ética de cada propuesta frente a las necesidades reales de la comunidad educativa.',
+        'Anular las elecciones y nombrar a dedo a los representantes estudiantiles.',
+        'Decir a los estudiantes por quién votar obligatoriamente.'
+      ],
+      correcta: 1,
+      explicacion: 'La competencia "Convive y participa democráticamente" exige ejercitar la ciudadanía deliberando sobre asuntos públicos con base en criterios de bien común, viabilidad y valores democráticos, combatiendo prácticas clientelares desde la infancia.'
+    },
+    {
+      id: 61,
+      categoria: 'Personal Social',
+      subcategoria: 'Convivencia y participación democrática',
+      situacion: 'En una asamblea familiar de la escuela, algunos padres afirman que "a los niños no se les debe pedir opinión sobre los problemas del colegio ni del hogar, porque los niños solo tienen que obedecer callados lo que mandan los adultos".',
+      pregunta: 'Desde el Enfoque de Derechos y la Convención sobre los Derechos del Niño, ¿qué debe sostener la docente?',
+      opciones: [
+        'Respaldar esa postura para no contradecir a los padres de familia.',
+        'Aclarar que los niños son sujetos de derecho y que la legislación nacional e internacional reconoce su derecho fundamental a ser informados, expresar su opinión libremente y que esta sea tomada en cuenta en todos los asuntos que los afectan de acuerdo con su madurez.',
+        'Sugerir que los niños decidan absolutamente todo en el hogar sin ninguna supervisión adulta.',
+        'Prohibir que los padres asistan a las reuniones escolares.'
+      ],
+      correcta: 1,
+      explicacion: 'El enfoque de derechos reconoce a las niñas, niños y adolescentes como ciudadanos plenos y sujetos de derechos, con voz legítima para participar en decisiones que conciernen a su vida familiar, comunitaria y escolar.'
+    },
+    {
+      id: 62,
+      categoria: 'Personal Social',
+      subcategoria: 'Convivencia y participación democrática',
+      situacion: 'Una docente detecta que un estudiante nuevo procedente de otra región del país es sistemáticamente excluido de los grupos de juego y algunos compañeros se burlan de su acento al hablar.',
+      pregunta: '¿Cuál de las siguientes acciones aborda este problema desde un enfoque restaurativo e intercultural?',
+      opciones: [
+        'Aconsejar al estudiante nuevo que no hable en clase para que nadie se entere de su procedencia.',
+        'Convocar a círculos de diálogo en el aula para reflexionar sobre la empatía, celebrar la riqueza de la diversidad lingüística del Perú y generar compromisos colectivos explícitos de acogida y no discriminación.',
+        'Expulsar de la institución educativa a todos los estudiantes involucrados en las burlas de forma fulminante.',
+        'Ignorar la situación argumentando que la burla es común entre niños de esa edad.'
+      ],
+      correcta: 1,
+      explicacion: 'Frente al acoso escolar o la discriminación por origen cultural o lingüístico, el protocolo del MINEDU prioriza la sensibilización, el diálogo reflexivo, la empatía y la restauración de relaciones solidarias, valorando la pluriculturalidad de nuestro país.'
+    },
+    {
+      id: 63,
+      categoria: 'Personal Social',
+      subcategoria: 'Comprensión del espacio y procesos históricos',
+      situacion: 'Para abordar la migración del campo a la ciudad en el Perú durante la segunda mitad del siglo XX, un docente de sexto grado lleva al aula cartas familiares, fotografías antiguas de barriadas limeñas, testimonios orales de abuelos y fragmentos de noticias de periódicos de 1960.',
+      pregunta: '¿Qué capacidad de la competencia "Construye interpretaciones históricas" está desarrollando prioritariamente con esta selección de materiales?',
+      opciones: [
+        'Comprende el tiempo histórico mediante la memorización de líneas cronológicas vacías.',
+        'Interpreta críticamente fuentes diversas (fuentes primarias y secundarias) para comprender las motivaciones y vivencias de los protagonistas de los procesos históricos.',
+        'Elabora explicaciones sobre procesos históricos sin recurrir a ningún documento comprobable.',
+        'Deduce fórmulas estadísticas de censos nacionales sin contexto.'
+      ],
+      correcta: 1,
+      explicacion: 'El pensamiento histórico se construye a partir de la capacidad de "interpretar críticamente fuentes diversas". El uso de cartas, testimonios orales y fotografías permite al estudiante interrogar los vestigios del pasado como evidencia histórica viva.'
+    },
+    {
+      id: 64,
+      categoria: 'Personal Social',
+      subcategoria: 'Comprensión del espacio y procesos históricos',
+      situacion: 'En una escuela ubicada cerca de la ribera de un río caudaloso, el docente planifica una sesión para que los estudiantes de cuarto grado identifiquen los factores de vulnerabilidad y riesgo ante eventuales huaicos e inundaciones en época de lluvias.',
+      pregunta: '¿Cuál de las siguientes actividades aporta más a la competencia "Gestiona responsablemente el espacio y el ambiente"?',
+      opciones: [
+        'Dibujar un río con peces de colores en una cartulina decorativa.',
+        'Realizar un recorrido de observación guiada por el entorno para mapear las zonas críticas de peligro (casas construidas en la quebrada, acumulación de basura en el cauce), elaborar un plano de evacuación y proponer medidas de prevención comunal.',
+        'Aprenderse de memoria la definición teórica de "desastre natural" copiada de una enciclopedia.',
+        'Culpar a la naturaleza por los desastres sin analizar la acción humana sobre el territorio.'
+      ],
+      correcta: 1,
+      explicacion: 'La gestión responsable del riesgo de desastres implica comprender que los desastres no son "naturales", sino el resultado de amenazas naturales combinadas con la vulnerabilidad social provocada por la ocupación inadecuada del espacio. Mapear riesgos locales y diseñar planes de contingencia concreta esta competencia.'
+    },
+    {
+      id: 65,
+      categoria: 'Personal Social',
+      subcategoria: 'Comprensión del espacio y procesos históricos',
+      situacion: 'Al estudiar las civilizaciones andinas preincas, los estudiantes de quinto grado investigan sobre la tecnología hidráulica de los andenes y las amunas para la "siembra y cosecha de agua".',
+      pregunta: '¿Qué valoración socioambiental e histórica promueve el docente con este estudio?',
+      opciones: [
+        'Reconocer la sabiduría ecológica de las sociedades originarias andinas en la gestión sostenible del agua y el suelo, reflexionando sobre cómo esa tecnología ancestral puede responder a la crisis hídrica contemporánea.',
+        'Demostrar que los pueblos prehispánicos destruían el medio ambiente con sus construcciones de piedra.',
+        'Sostener que la agricultura moderna no tiene nada que aprender de las técnicas del pasado.',
+        'Memorizar únicamente los nombres en quechua de las herramientas agrícolas para una prueba escrita.'
+      ],
+      correcta: 0,
+      explicacion: 'El estudio del pasado andino adquiere sentido ciudadano cuando se valoran las tecnologías ancestrales sostenibles (andenes, amunas, camellones) como soluciones inteligentes y vigentes frente a los desafíos climáticos del presente.'
+    },
+
+    // ==========================================
+    // ÁREA 5: CIENCIA Y TECNOLOGÍA (10 preguntas)
+    // ==========================================
+    {
+      id: 66,
+      categoria: 'Ciencia y Tecnología',
+      subcategoria: 'Indagación científica',
+      situacion: 'Los estudiantes de cuarto grado observan con curiosidad que un clavo de hierro sumergido en agua salada se llena de herrumbre rojiza mucho más rápido que un clavo en agua de caño y otro al aire seco. La docente desea que formulen una pregunta de indagación científica.',
+      pregunta: '¿Cuál de las siguientes preguntas cumple de manera adecuada con las características de una "pregunta investigable" orientada a la indagación científica?',
+      opciones: [
+        '¿A quién se le ocurrió inventar los clavos de hierro en la historia?',
+        '¿De qué manera influye el tipo de líquido en el que se sumerge un clavo de hierro en la velocidad de su oxidación?',
+        '¿Por qué el óxido es de color feo y desagradable?',
+        '¿Cuántos clavos vende la ferretería del barrio al mes?'
+      ],
+      correcta: 1,
+      explicacion: 'Una pregunta investigable o problematizadora en ciencia debe relacionar explícitamente una variable independiente o causa (tipo de líquido) con una variable dependiente o efecto medible (velocidad de oxidación del clavo), permitiendo su comprobación empírica.'
+    },
+    {
+      id: 67,
+      categoria: 'Ciencia y Tecnología',
+      subcategoria: 'Indagación científica',
+      situacion: 'En un experimento para comprobar el crecimiento de las plantas, los estudiantes de quinto grado colocan cuatro semillas de frijol en vasos con la misma cantidad y tipo de tierra, expuestas a la misma cantidad de luz solar diaria, pero al vaso 1 le agregan 10 ml de agua al día, al vaso 2 le agregan 30 ml, al vaso 3 le agregan 60 ml y al vaso 4 no le agregan nada de agua.',
+      pregunta: 'En este diseño experimental, ¿cuál es la variable independiente (causa manipulada)?',
+      opciones: [
+        'La altura final del tallo del frijol en centímetros.',
+        'El tipo de tierra y la cantidad de luz solar.',
+        'La cantidad de agua administrada a cada planta.',
+        'El color de los vasos de plástico.'
+      ],
+      correcta: 2,
+      explicacion: 'La variable independiente es aquella que el investigador manipula intencionalmente (la cantidad diaria de agua). La variable dependiente es el efecto observado (crecimiento de la planta) y las variables intervinientes controladas son el tipo de tierra, la luz y la semilla.'
+    },
+    {
+      id: 68,
+      categoria: 'Ciencia y Tecnología',
+      subcategoria: 'Indagación científica',
+      situacion: 'Al iniciar una indagación sobre la fermentación en sexto grado, la docente plantea la pregunta: "¿Cómo influye la cantidad de azúcar en la producción de gas (dióxido de carbono) por parte de la levadura en agua tibia?".',
+      pregunta: '¿Cuál de las siguientes proposiciones constituye una hipótesis científica correctamente formulada por un estudiante?',
+      opciones: [
+        'La levadura es un hongo microscópico unicelular muy bonito.',
+        'Si aumentamos la cantidad de azúcar disuelta en el agua tibia, entonces aumentará el volumen de gas producido por la levadura, porque tendrá mayor cantidad de alimento para fermentar.',
+        'El azúcar es dulce y se usa para preparar postres y tortas.',
+        'Nosotros creemos que la levadura no sirve para nada.'
+      ],
+      correcta: 1,
+      explicacion: 'Una hipótesis es una respuesta tentativa fundamentada a la pregunta de indagación, estructurada lógicamente como una relación de causalidad ("Si [variable independiente]..., entonces [variable dependiente]...").'
+    },
+    {
+      id: 69,
+      categoria: 'Ciencia y Tecnología',
+      subcategoria: 'Indagación científica',
+      situacion: 'Un equipo de tercer grado quiere comprobar si los objetos pesados caen más rápido que los livianos. Dejan caer una moneda de un sol y una hoja entera de papel bond abierta desde la misma altura.',
+      pregunta: 'La docente nota que la resistencia del aire frena la hoja de papel abierta. ¿Qué orientación debe brindarles para controlar esta variable interviniente?',
+      opciones: [
+        'Decirles que el experimento está mal hecho y ordenarles que guarden todo.',
+        'Pedirles que arruguen la hoja de papel hasta convertirla en una bolita compacta y bien apretada, para igualar la resistencia del aire y observar si ambas caen simultáneamente.',
+        'Tirar la moneda por la ventana para ver si se rompe.',
+        'Concluir apresuradamente que la gravedad solo atrae a los metales.'
+      ],
+      correcta: 1,
+      explicacion: 'El control de variables intervinientes es crucial en el diseño experimental. Al compactar la hoja de papel en una esfera apretada, se minimiza la superficie de sustentación y fricción con el aire, permitiendo verificar que la aceleración gravitatoria actúa por igual sobre ambas masas.'
+    },
+    {
+      id: 70,
+      categoria: 'Ciencia y Tecnología',
+      subcategoria: 'Indagación científica',
+      situacion: 'Durante una semana, estudiantes de quinto grado midieron la temperatura del agua calentada por un colector solar casero a diferentes horas del día.',
+      pregunta: 'Para organizar y registrar adecuadamente los datos cuantitativos obtenidos, ¿cuál es el instrumento metodológico más pertinente?',
+      opciones: [
+        'Escribir oraciones sueltas y desordenadas en hojas en blanco.',
+        'Elaborar una tabla de doble entrada con columnas claramente rotuladas (Hora del día, Temperatura en °C y Observaciones) y construir un gráfico de líneas para visualizar la variación térmica.',
+        'Memorizar los números sin anotar nada en el cuaderno.',
+        'Pintar un mural artístico sobre el Sol.'
+      ],
+      correcta: 1,
+      explicacion: 'La capacidad "Genera y registra datos e información" exige organizar las mediciones sistemáticas en tablas de datos organizadas con unidades métricas estandarizadas (°C) y traducirlas a representaciones gráficas para facilitar su posterior análisis.'
+    },
+    {
+      id: 71,
+      categoria: 'Ciencia y Tecnología',
+      subcategoria: 'Indagación científica',
+      situacion: 'Al concluir una indagación, los estudiantes comparan los resultados obtenidos con su hipótesis inicial y con información confiable de textos científicos.',
+      pregunta: '¿A qué momento clave del proceso de indagación científica corresponde esta acción reflexiva?',
+      opciones: [
+        'Planteamiento del problema.',
+        'Diseño de medidas de seguridad.',
+        'Estructuración del saber construido y contrastación de hipótesis para elaborar conclusiones fundamentadas.',
+        'Limpieza del aula de clase.'
+      ],
+      correcta: 2,
+      explicacion: 'La contrastación de los datos empíricos con la hipótesis inicial y con el conocimiento científico acumulado permite validar o refutar la conjetura inicial y construir conclusiones legítimas basadas en evidencia.'
+    },
+    {
+      id: 72,
+      categoria: 'Ciencia y Tecnología',
+      subcategoria: 'Comprensión del mundo natural y tecnológico',
+      situacion: 'En una sesión de cuarto grado sobre ecosistemas, los estudiantes analizan qué ocurriría en una cadena trófica de un valle agrícola si se exterminaran por completo todas las ranas y sapos mediante el uso excesivo de pesticidas.',
+      pregunta: '¿Cuál es la consecuencia ecológica más directa que los estudiantes deben deducir?',
+      opciones: [
+        'Que las plantas crecerían mucho más rápido sin ranas.',
+        'Que aumentaría desmedidamente la población de insectos plaga herbívoros al desaparecer su depredador natural, lo que a su vez causaría daños severos en los cultivos y desequilibraría la cadena trófica.',
+        'Que los sapos se transformarían en peces para no morir.',
+        'Que el clima del valle se volvería polar inmediatamente.'
+      ],
+      correcta: 1,
+      explicacion: 'La comprensión de las interacciones tróficas en los ecosistemas (CNEB) permite deducir que la supresión de un consumidor secundario (anfibios insectívoros) rompe el equilibrio biológico, produciendo una sobrepoblación descontrolada de consumidores primarios (plagas).'
+    },
+    {
+      id: 73,
+      categoria: 'Ciencia y Tecnología',
+      subcategoria: 'Comprensión del mundo natural y tecnológico',
+      situacion: 'Al servir limonada con hielo en un vaso de vidrio transparente en un día caluroso, un estudiante de tercer grado observa que la superficie exterior del vaso se llena de pequeñas gotas de agua y exclama: "¡El vaso tiene huequitos y la limonada se está saliendo!".',
+      pregunta: '¿Qué intervención docente ayuda al estudiante a construir una explicación científica de este fenómeno físico?',
+      opciones: [
+        'Confirmar que el vaso está roto y pedirle que lo tire a la basura.',
+        'Hacerle probar una gotita del exterior para constatar que es agua pura y no limonada dulce, y orientarlo a reflexionar: "En el aire que nos rodea hay vapor de agua invisible; ¿qué le sucede a ese vapor caliente cuando choca contra el vidrio que está muy frío? ¿Cómo se llama ese cambio de gas a líquido?".',
+        'Decirle que es magia de la naturaleza y no hacer más preguntas.',
+        'Sancionarlo por derramar líquidos en la mesa.'
+      ],
+      correcta: 1,
+      explicacion: 'La intervención desmonta la concepción errónea mediante la evidencia empírica (el agua condensada exterior no tiene azúcar ni sabor a limón) y guía la deducción del cambio de estado físico de la materia: la condensación del vapor de agua ambiental al contacto con una superficie fría.'
+    },
+    {
+      id: 74,
+      categoria: 'Ciencia y Tecnología',
+      subcategoria: 'Comprensión del mundo natural y tecnológico',
+      situacion: 'Durante una clase de educación física en quinto grado, los estudiantes notan que tras correr a gran velocidad su respiración se acelera intensamente y su corazón late con mucha fuerza en el pecho.',
+      pregunta: '¿Cómo explica la ciencia la interacción funcional integrada entre el sistema respiratorio y el sistema circulatorio ante el esfuerzo físico?',
+      opciones: [
+        'El corazón y los pulmones compiten entre sí para ver cuál funciona más rápido.',
+        'Al aumentar la actividad muscular, las células demandan mayor cantidad de oxígeno y energía y desechan más dióxido de carbono; los pulmones aceleran el intercambio gaseoso y el corazón bombea la sangre más rápidamente para transportar ese oxígeno a los tejidos.',
+        'El cuerpo humano se calienta tanto que el corazón intenta apagarse para no quemarse.',
+        'No existe ninguna relación fisiológica entre respirar y los latidos cardíacos.'
+      ],
+      correcta: 1,
+      explicacion: 'La competencia "Explica el mundo físico basándose en conocimientos sobre los seres vivos" implica comprender la coordinación homeostática entre sistemas orgánicos: el sistema cardiovascular y el respiratorio actúan de manera sinérgica para abastecer de O₂ y remover CO₂ durante el metabolismo acelerado.'
+    },
+    {
+      id: 75,
+      categoria: 'Ciencia y Tecnología',
+      subcategoria: 'Comprensión del mundo natural y tecnológico',
+      situacion: 'En una comunidad costera sin agua potable, los estudiantes de sexto grado diseñan un destilador solar casero utilizando botellas de plástico reutilizadas para desalinizar agua de mar mediante la evaporación y condensación impulsada por la energía solar.',
+      pregunta: '¿A qué competencia del área de Ciencia y Tecnología responde prioritariamente la construcción y validación de este prototipo?',
+      opciones: [
+        'Indaga mediante métodos científicos para construir conocimientos.',
+        'Diseña y construye soluciones tecnológicas para resolver problemas de su entorno.',
+        'Gestiona proyectos de emprendimiento económico exclusivamente.',
+        'Aprecia de manera crítica manifestaciones artístico-culturales.'
+      ],
+      correcta: 1,
+      explicacion: 'La competencia "Diseña y construye soluciones tecnológicas para resolver problemas de su entorno" involucra determinar una alternativa de solución tecnológica, diseñar el prototipo basándose en principios científicos, implementarlo con materiales accesibles y evaluar su funcionamiento e impacto ambiental.'
+    }
+  ];
+
+  // APPLICATION CONTROLLER
+  const app = {
+    // State
+    currentScreen: 'landing',
+    examQuestions: [],
+    currentExamIndex: 0,
+    examUserAnswers: {}, // index in exam -> selected option (0..3)
+    examFlagged: {},     // index in exam -> true/false
+    examTimerSeconds: 3 * 60 * 60, // 3 hours = 10800 seconds
+    examTimerInterval: null,
+    examStartTime: null,
+    examTimeTakenSeconds: 0,
+    
+    // Study Mode State
+    studyQuestions: [],
+    currentStudyIndex: 0,
+    studyCategory: 'ALL',
+    studyHits: 0,
+    studyMisses: 0,
+    studyAnsweredState: {}, // id -> { selected, isCorrect }
+
+    // Initialize
+    init() {
+      this.checkStoredHistory();
+      this.renderStudyCategoryData();
+    },
+
+    // Check LocalStorage
+    checkStoredHistory() {
+      try {
+        const raw = localStorage.getItem('examen_ascenso_ultimo_resultado');
+        if (raw) {
+          const data = JSON.parse(raw);
+          const historyBox = document.getElementById('history-box');
+          const historyTitle = document.getElementById('history-title');
+          const historyDesc = document.getElementById('history-desc');
+          
+          if (historyBox && data) {
+            historyBox.style.display = 'flex';
+            const statusText = data.isApproved ? '✅ Aprobado para 2ª Escala' : '⚠️ No alcanzado';
+            historyTitle.textContent = `Último Examen: ${data.date} (${statusText})`;
+            historyDesc.textContent = `Puntaje obtenido: ${data.score.toFixed(1)} / 90 pts (${data.correctCount}/60 aciertos) • Tiempo: ${data.timeStr}`;
+          }
+        }
+      } catch (e) {
+        console.error('Error reading localStorage', e);
+      }
+    },
+
+    // Switch View Screens
+    switchScreen(screenName) {
+      document.querySelectorAll('.view-screen').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById('screen-' + screenName);
+      if (target) {
+        target.classList.add('active');
+        this.currentScreen = screenName;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    },
+
+    showLanding() {
+      if (this.currentScreen === 'exam') {
+        if (!confirm('¿Seguro que deseas salir del examen en curso? Tu progreso actual no se guardará.')) {
+          return;
+        }
+        clearInterval(this.examTimerInterval);
+      }
+      this.checkStoredHistory();
+      this.switchScreen('landing');
+    },
+
+    // ==========================================
+    // EXAM MODE METHODS
+    // ==========================================
+    startExam() {
+      // 1. Randomly sample 60 distinct questions from 75 bank (Fisher-Yates)
+      const shuffled = [...BANCO_PREGUNTAS].sort(() => 0.5 - Math.random());
+      this.examQuestions = shuffled.slice(0, 60);
+
+      // 2. Reset state
+      this.currentExamIndex = 0;
+      this.examUserAnswers = {};
+      this.examFlagged = {};
+      this.examTimerSeconds = 3 * 60 * 60; // 180 minutes
+      this.examStartTime = new Date();
+
+      // 3. Setup Timer
+      if (this.examTimerInterval) clearInterval(this.examTimerInterval);
+      this.updateTimerDisplay();
+      this.examTimerInterval = setInterval(() => {
+        this.examTimerSeconds--;
+        this.updateTimerDisplay();
+
+        if (this.examTimerSeconds <= 0) {
+          clearInterval(this.examTimerInterval);
+          alert('⏰ ¡El tiempo del examen de 3 horas ha concluido! Tus respuestas se enviarán automáticamente para calificación.');
+          this.finishExam();
+        }
+      }, 1000);
+
+      // 4. Render Palette Buttons
+      this.renderPaletteGrid();
+
+      // 5. Render First Question & show screen
+      this.switchScreen('exam');
+      this.renderCurrentExamQuestion();
+      this.updateExamProgressUI();
+    },
+
+    updateTimerDisplay() {
+      const box = document.getElementById('exam-timer-box');
+      const text = document.getElementById('exam-timer-text');
+      if (!text || !box) return;
+
+      const hrs = Math.floor(this.examTimerSeconds / 3600);
+      const mins = Math.floor((this.examTimerSeconds % 3600) / 60);
+      const secs = this.examTimerSeconds % 60;
+
+      const format = (n) => String(n).padStart(2, '0');
+      text.textContent = `${format(hrs)}:${format(mins)}:${format(secs)}`;
+
+      // Warning color styles (< 30 min, < 10 min)
+      if (this.examTimerSeconds < 600) {
+        box.className = 'timer-container danger';
+      } else if (this.examTimerSeconds < 1800) {
+        box.className = 'timer-container warning';
+      } else {
+        box.className = 'timer-container';
+      }
+    },
+
+    renderPaletteGrid() {
+      const container = document.getElementById('palette-grid-buttons');
+      if (!container) return;
+      container.innerHTML = '';
+
+      for (let i = 0; i < 60; i++) {
+        const btn = document.createElement('button');
+        btn.id = `palette-btn-${i}`;
+        btn.className = 'palette-btn';
+        btn.textContent = i + 1;
+        btn.onclick = () => {
+          app.goToExamQuestion(i);
+        };
+        container.appendChild(btn);
+      }
+    },
+
+    renderCurrentExamQuestion() {
+      const q = this.examQuestions[this.currentExamIndex];
+      if (!q) return;
+
+      // Update text fields
+      document.getElementById('q-number-display').textContent = `Pregunta ${this.currentExamIndex + 1} de 60`;
+      document.getElementById('q-category-display').textContent = q.categoria;
+      document.getElementById('q-subcat-display').textContent = q.subcategoria;
+      document.getElementById('q-scenario-text').textContent = q.situacion;
+      document.getElementById('q-prompt-text').textContent = q.pregunta;
+
+      // Flag button
+      const flagBtn = document.getElementById('q-flag-btn');
+      const flagText = document.getElementById('q-flag-text');
+      const isFlagged = !!this.examFlagged[this.currentExamIndex];
+      if (isFlagged) {
+        flagBtn.classList.add('flagged');
+        flagText.textContent = 'Marcada para revisión';
+      } else {
+        flagBtn.classList.remove('flagged');
+        flagText.textContent = 'Marcar para revisión';
+      }
+
+      // Options
+      const optionsContainer = document.getElementById('q-options-container');
+      optionsContainer.innerHTML = '';
+      const letters = ['A', 'B', 'C', 'D'];
+      const userSelected = this.examUserAnswers[this.currentExamIndex];
+
+      q.opciones.forEach((optText, idx) => {
+        const optDiv = document.createElement('div');
+        optDiv.className = `option-item ${userSelected === idx ? 'selected' : ''}`;
+        optDiv.onclick = () => {
+          app.selectExamAnswer(idx);
+        };
+
+        optDiv.innerHTML = `
+          <div class="option-letter">${letters[idx]}</div>
+          <div class="option-label">${optText}</div>
+        `;
+        optionsContainer.appendChild(optDiv);
+      });
+
+      // Update prev/next buttons
+      document.getElementById('btn-prev-q').disabled = (this.currentExamIndex === 0);
+      const nextBtn = document.getElementById('btn-next-q');
+      if (this.currentExamIndex === 59) {
+        nextBtn.textContent = 'Revisar / Entregar 🏁';
+      } else {
+        nextBtn.textContent = 'Siguiente ➡';
+      }
+
+      // Update Palette buttons state
+      this.updatePaletteStates();
+    },
+
+    selectExamAnswer(optIndex) {
+      this.examUserAnswers[this.currentExamIndex] = optIndex;
+      this.renderCurrentExamQuestion();
+      this.updateExamProgressUI();
+    },
+
+    toggleFlagCurrent() {
+      const current = this.examFlagged[this.currentExamIndex];
+      this.examFlagged[this.currentExamIndex] = !current;
+      this.renderCurrentExamQuestion();
+    },
+
+    prevQuestion() {
+      if (this.currentExamIndex > 0) {
+        this.currentExamIndex--;
+        this.renderCurrentExamQuestion();
+        window.scrollTo({ top: 120, behavior: 'smooth' });
+      }
+    },
+
+    nextQuestion() {
+      if (this.currentExamIndex < 59) {
+        this.currentExamIndex++;
+        this.renderCurrentExamQuestion();
+        window.scrollTo({ top: 120, behavior: 'smooth' });
+      } else {
+        this.confirmFinishExam();
+      }
+    },
+
+    goToExamQuestion(index) {
+      if (index >= 0 && index < 60) {
+        this.currentExamIndex = index;
+        this.renderCurrentExamQuestion();
+        window.scrollTo({ top: 120, behavior: 'smooth' });
+      }
+    },
+
+    updatePaletteStates() {
+      for (let i = 0; i < 60; i++) {
+        const btn = document.getElementById(`palette-btn-${i}`);
+        if (!btn) continue;
+
+        btn.className = 'palette-btn';
+        if (this.examUserAnswers[i] !== undefined) {
+          btn.classList.add('answered');
+        }
+        if (this.examFlagged[i]) {
+          btn.classList.add('flagged');
+        }
+        if (i === this.currentExamIndex) {
+          btn.classList.add('current');
+        }
+      }
+    },
+
+    updateExamProgressUI() {
+      const answeredCount = Object.keys(this.examUserAnswers).length;
+      document.getElementById('exam-progress-text').textContent = `${answeredCount} / 60`;
+      const pct = (answeredCount / 60) * 100;
+      document.getElementById('exam-progress-bar').style.width = `${pct}%`;
+      document.getElementById('palette-status-count').textContent = `${answeredCount}/60 respondidas`;
+    },
+
+    confirmFinishExam() {
+      const answeredCount = Object.keys(this.examUserAnswers).length;
+      const blankCount = 60 - answeredCount;
+      const flaggedCount = Object.values(this.examFlagged).filter(Boolean).length;
+
+      document.getElementById('modal-stat-answered').textContent = answeredCount;
+      document.getElementById('modal-stat-blank').textContent = blankCount;
+      document.getElementById('modal-stat-flagged').textContent = flaggedCount;
+
+      document.getElementById('exam-confirm-modal').classList.add('active');
+    },
+
+    closeModal() {
+      document.getElementById('exam-confirm-modal').classList.remove('active');
+    },
+
+    finishExam() {
+      this.closeModal();
+      clearInterval(this.examTimerInterval);
+
+      // Compute Time Taken
+      const totalSecondsAvailable = 3 * 3600;
+      this.examTimeTakenSeconds = Math.max(1, totalSecondsAvailable - this.examTimerSeconds);
+
+      // Calculate Scores
+      let correctCount = 0;
+      let wrongCount = 0;
+      let blankCount = 0;
+
+      const areaBreakdown = {
+        'Conocimientos Pedagógicos': { total: 0, correct: 0 },
+        'Comunicación': { total: 0, correct: 0 },
+        'Matemática': { total: 0, correct: 0 },
+        'Personal Social': { total: 0, correct: 0 },
+        'Ciencia y Tecnología': { total: 0, correct: 0 }
+      };
+
+      this.examQuestions.forEach((q, idx) => {
+        const userChoice = this.examUserAnswers[idx];
+        if (areaBreakdown[q.categoria]) {
+          areaBreakdown[q.categoria].total++;
+        }
+
+        if (userChoice === undefined) {
+          blankCount++;
+        } else if (userChoice === q.correcta) {
+          correctCount++;
+          if (areaBreakdown[q.categoria]) {
+            areaBreakdown[q.categoria].correct++;
+          }
+        } else {
+          wrongCount++;
+        }
+      });
+
+      const scoreEarned = correctCount * 1.5; // 1.5 pts per correct
+      const isApproved = scoreEarned >= 54.0; // 54 pts minimum for 2ª Escala
+
+      // Format time string
+      const hrs = Math.floor(this.examTimeTakenSeconds / 3600);
+      const mins = Math.floor((this.examTimeTakenSeconds % 3600) / 60);
+      const secs = this.examTimeTakenSeconds % 60;
+      const timeStr = `${hrs > 0 ? hrs + 'h ' : ''}${mins}m ${secs}s`;
+
+      // Save to LocalStorage
+      const resultData = {
+        date: new Date().toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        score: scoreEarned,
+        correctCount,
+        wrongCount,
+        blankCount,
+        isApproved,
+        timeStr,
+        areaBreakdown,
+        examQuestions: this.examQuestions,
+        examUserAnswers: this.examUserAnswers
+      };
+
+      try {
+        localStorage.setItem('examen_ascenso_ultimo_resultado', JSON.stringify(resultData));
+      } catch (e) {
+        console.warn('LocalStorage save error:', e);
+      }
+
+      this.displayResults(resultData);
+    },
+
+    displayResults(data) {
+      // Render Screen Elements
+      document.getElementById('res-score-earned').textContent = data.score.toFixed(1);
+      document.getElementById('res-score-detail').textContent = `Has acertado ${data.correctCount} de 60 preguntas (${((data.correctCount / 60) * 100).toFixed(1)}% de efectividad)`;
+      document.getElementById('res-correct-count').textContent = data.correctCount;
+      document.getElementById('res-wrong-count').textContent = data.wrongCount;
+      document.getElementById('res-blank-count').textContent = data.blankCount;
+      document.getElementById('res-time-taken').textContent = data.timeStr;
+
+      // Approved Stamp
+      const stamp = document.getElementById('results-stamp');
+      const stampText = document.getElementById('results-stamp-text');
+      if (data.isApproved) {
+        stamp.className = 'results-badge-stamp approved';
+        stampText.textContent = `¡FELICITACIONES! ALCANZASTE EL PUNTAJE PARA LA 2ª ESCALA (${data.score.toFixed(1)} pts)`;
+      } else {
+        stamp.className = 'results-badge-stamp failed';
+        stampText.textContent = `NO ALCANZASTE EL PUNTAJE MÍNIMO (54.0 pts) • Obtuviste ${data.score.toFixed(1)} pts`;
+      }
+
+      // Escala Table Benchmark
+      const escalasConfig = [
+        { id: 2, min: 54.0 },
+        { id: 3, min: 57.0 },
+        { id: 4, min: 60.0 },
+        { id: 5, min: 63.0 },
+        { id: 6, min: 66.0 },
+        { id: 7, min: 69.0 }
+      ];
+
+      escalasConfig.forEach(esc => {
+        const statusEl = document.getElementById(`escala-status-${esc.id}`);
+        if (statusEl) {
+          if (data.score >= esc.min) {
+            statusEl.className = 'status pass';
+            statusEl.innerHTML = '✅ Alcanzado';
+          } else {
+            statusEl.className = 'status fail';
+            statusEl.innerHTML = `❌ Falta ${(esc.min - data.score).toFixed(1)} pts`;
+          }
+        }
+      });
+
+      // Category Breakdown Bars
+      const breakdownContainer = document.getElementById('category-breakdown-bars');
+      breakdownContainer.innerHTML = '';
+
+      Object.keys(data.areaBreakdown).forEach(area => {
+        const item = data.areaBreakdown[area];
+        const pct = item.total > 0 ? Math.round((item.correct / item.total) * 100) : 0;
+        const pts = (item.correct * 1.5).toFixed(1);
+        const maxPts = (item.total * 1.5).toFixed(1);
+
+        const barDiv = document.createElement('div');
+        barDiv.className = 'cat-bar-item';
+        barDiv.innerHTML = `
+          <div class="cat-bar-header">
+            <span>${area}</span>
+            <span><strong>${item.correct} de ${item.total} aciertos</strong> (${pts} / ${maxPts} pts • ${pct}%)</span>
+          </div>
+          <div class="cat-bar-bg">
+            <div class="cat-bar-fill" style="width: ${pct}%; background: ${pct >= 60 ? 'var(--success)' : (pct >= 40 ? 'var(--warning)' : 'var(--danger)')};"></div>
+          </div>
+        `;
+        breakdownContainer.appendChild(barDiv);
+      });
+
+      this.switchScreen('results');
+    },
+
+    showLastResults() {
+      try {
+        const raw = localStorage.getItem('examen_ascenso_ultimo_resultado');
+        if (raw) {
+          const data = JSON.parse(raw);
+          this.examQuestions = data.examQuestions || [];
+          this.examUserAnswers = data.examUserAnswers || {};
+          this.displayResults(data);
+        }
+      } catch (e) {
+        alert('No se pudieron cargar los resultados anteriores.');
+      }
+    },
+
+    showResults() {
+      this.switchScreen('results');
+    },
+
+    // ==========================================
+    // REVIEW SCREEN METHODS
+    // ==========================================
+    showReviewScreen() {
+      this.renderReviewCards('all');
+      this.switchScreen('review');
+    },
+
+    filterReview(filterType, btnEl) {
+      document.querySelectorAll('.review-filter-btn').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      this.renderReviewCards(filterType);
+    },
+
+    renderReviewCards(filter) {
+      const container = document.getElementById('review-cards-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const letters = ['A', 'B', 'C', 'D'];
+      let correctCnt = 0;
+      let incorrectCnt = 0;
+      let unansweredCnt = 0;
+
+      this.examQuestions.forEach((q, idx) => {
+        const userChoice = this.examUserAnswers[idx];
+        const isAnswered = (userChoice !== undefined);
+        const isCorrect = isAnswered && (userChoice === q.correcta);
+
+        if (!isAnswered) unansweredCnt++;
+        else if (isCorrect) correctCnt++;
+        else incorrectCnt++;
+
+        // Filter check
+        if (filter === 'correct' && !isCorrect) return;
+        if (filter === 'incorrect' && (isCorrect || !isAnswered)) return;
+        if (filter === 'unanswered' && isAnswered) return;
+
+        const card = document.createElement('div');
+        let cardStatusClass = 'unanswered';
+        let badgeHtml = '<span style="color: #b26a00; font-weight: 700;">⚪ Sin responder (0 pts)</span>';
+
+        if (isCorrect) {
+          cardStatusClass = 'correct';
+          badgeHtml = '<span style="color: var(--success); font-weight: 700;">✅ Correcta (+1.5 pts)</span>';
+        } else if (isAnswered) {
+          cardStatusClass = 'incorrect';
+          badgeHtml = '<span style="color: var(--danger); font-weight: 700;">❌ Incorrecta (0 pts)</span>';
+        }
+
+        card.className = `review-card ${cardStatusClass}`;
+
+        // Options HTML
+        let optionsHtml = '';
+        q.opciones.forEach((optText, optIdx) => {
+          let optClass = 'review-option';
+          let indicator = '';
+
+          if (optIdx === q.correcta) {
+            optClass += ' is-correct';
+            indicator = ' <span style="margin-left: auto;">(Respuesta Correcta ✓)</span>';
+          }
+          if (isAnswered && optIdx === userChoice && userChoice !== q.correcta) {
+            optClass += ' is-user-wrong';
+            indicator = ' <span style="margin-left: auto;">(Tu elección ✗)</span>';
+          } else if (isAnswered && optIdx === userChoice && userChoice === q.correcta) {
+            indicator = ' <span style="margin-left: auto;">(Tu elección ✓)</span>';
+          }
+
+          optionsHtml += `
+            <div class="${optClass}">
+              <strong>${letters[optIdx]}.</strong> <span>${optText}</span>${indicator}
+            </div>
+          `;
+        });
+
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <span style="font-weight: 800; font-size: 1.1rem; color: var(--secondary);">Pregunta ${idx + 1} de 60</span>
+              <span class="badge-category" style="margin-left: 8px;">${q.categoria}</span>
+              <span class="badge-subcat" style="margin-left: 4px;">${q.subcategoria}</span>
+            </div>
+            <div>${badgeHtml}</div>
+          </div>
+
+          <div class="scenario-box">
+            <div class="scenario-label">📌 Situación Significativa</div>
+            ${q.situacion}
+          </div>
+
+          <div class="prompt-text">${q.pregunta}</div>
+
+          <div style="margin-bottom: 16px;">
+            ${optionsHtml}
+          </div>
+
+          <div class="explanation-box">
+            <div class="explanation-title">💡 Sustento Pedagógico y Normativo MINEDU</div>
+            <div class="explanation-content">${q.explicacion}</div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      // Update counters
+      document.getElementById('rev-count-all').textContent = this.examQuestions.length;
+      document.getElementById('rev-count-correct').textContent = correctCnt;
+      document.getElementById('rev-count-incorrect').textContent = incorrectCnt;
+      document.getElementById('rev-count-unanswered').textContent = unansweredCnt;
+    },
+
+    // ==========================================
+    // STUDY MODE METHODS
+    // ==========================================
+    startStudyMode() {
+      this.studyCategory = 'ALL';
+      this.studyHits = 0;
+      this.studyMisses = 0;
+      this.studyAnsweredState = {};
+      this.currentStudyIndex = 0;
+      this.renderStudyCategoryData();
+      this.switchScreen('study');
+    },
+
+    setStudyCategory(category, btnEl) {
+      this.studyCategory = category;
+      this.currentStudyIndex = 0;
+      document.querySelectorAll('.study-tab-btn').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      this.renderStudyCategoryData();
+    },
+
+    renderStudyCategoryData() {
+      if (this.studyCategory === 'ALL') {
+        this.studyQuestions = [...BANCO_PREGUNTAS];
+      } else {
+        this.studyQuestions = BANCO_PREGUNTAS.filter(q => q.categoria === this.studyCategory);
+      }
+      this.renderCurrentStudyQuestion();
+    },
+
+    resetStudySession() {
+      this.studyHits = 0;
+      this.studyMisses = 0;
+      this.studyAnsweredState = {};
+      this.currentStudyIndex = 0;
+      document.getElementById('study-hits').textContent = '0';
+      document.getElementById('study-misses').textContent = '0';
+      this.renderCurrentStudyQuestion();
+    },
+
+    renderCurrentStudyQuestion() {
+      const q = this.studyQuestions[this.currentStudyIndex];
+      if (!q) return;
+
+      document.getElementById('study-q-counter').textContent = `Pregunta ${this.currentStudyIndex + 1} de ${this.studyQuestions.length}`;
+      document.getElementById('study-cat-pill').textContent = q.categoria;
+      document.getElementById('study-subcat-pill').textContent = q.subcategoria;
+      document.getElementById('study-scenario-text').textContent = q.situacion;
+      document.getElementById('study-prompt-text').textContent = q.pregunta;
+
+      const letters = ['A', 'B', 'C', 'D'];
+      const optionsContainer = document.getElementById('study-options-container');
+      optionsContainer.innerHTML = '';
+
+      const feedbackBox = document.getElementById('study-feedback');
+      const alreadyAnswered = this.studyAnsweredState[q.id];
+
+      if (alreadyAnswered) {
+        feedbackBox.style.display = 'block';
+        feedbackBox.className = `study-feedback-box ${alreadyAnswered.isCorrect ? 'correct' : 'incorrect'}`;
+        document.getElementById('study-fb-title').innerHTML = alreadyAnswered.isCorrect ? '✅ ¡Respuesta Correcta! • Sustento Pedagógico' : '❌ Respuesta Incorrecta • Análisis Pedagógico';
+        document.getElementById('study-fb-text').textContent = q.explicacion;
+      } else {
+        feedbackBox.style.display = 'none';
+      }
+
+      q.opciones.forEach((optText, optIdx) => {
+        const optDiv = document.createElement('div');
+        let itemClass = 'option-item';
+
+        if (alreadyAnswered) {
+          if (optIdx === q.correcta) {
+            itemClass += ' selected';
+            optDiv.style.borderColor = 'var(--success)';
+            optDiv.style.backgroundColor = 'var(--success-light)';
+          } else if (optIdx === alreadyAnswered.selected && !alreadyAnswered.isCorrect) {
+            optDiv.style.borderColor = 'var(--danger)';
+            optDiv.style.backgroundColor = 'var(--danger-light)';
+          }
+        }
+
+        optDiv.className = itemClass;
+        optDiv.onclick = () => {
+          if (!app.studyAnsweredState[q.id]) {
+            app.answerStudyQuestion(optIdx);
+          }
+        };
+
+        optDiv.innerHTML = `
+          <div class="option-letter">${letters[optIdx]}</div>
+          <div class="option-label">${optText}</div>
+        `;
+        optionsContainer.appendChild(optDiv);
+      });
+    },
+
+    answerStudyQuestion(chosenIdx) {
+      const q = this.studyQuestions[this.currentStudyIndex];
+      if (!q) return;
+
+      const isCorrect = (chosenIdx === q.correcta);
+      if (isCorrect) {
+        this.studyHits++;
+      } else {
+        this.studyMisses++;
+      }
+
+      this.studyAnsweredState[q.id] = { selected: chosenIdx, isCorrect };
+
+      document.getElementById('study-hits').textContent = this.studyHits;
+      document.getElementById('study-misses').textContent = this.studyMisses;
+
+      this.renderCurrentStudyQuestion();
+    },
+
+    prevStudyQuestion() {
+      if (this.currentStudyIndex > 0) {
+        this.currentStudyIndex--;
+        this.renderCurrentStudyQuestion();
+        window.scrollTo({ top: 120, behavior: 'smooth' });
+      }
+    },
+
+    nextStudyQuestion() {
+      if (this.currentStudyIndex < this.studyQuestions.length - 1) {
+        this.currentStudyIndex++;
+        this.renderCurrentStudyQuestion();
+        window.scrollTo({ top: 120, behavior: 'smooth' });
+      } else {
+        alert(`¡Has completado todas las preguntas de esta sección!\nAciertos: ${this.studyHits}\nErrores: ${this.studyMisses}\nEfectividad: ${Math.round((this.studyHits / (this.studyHits + this.studyMisses || 1)) * 100)}%`);
+      }
+    }
+  };
+
+  // Run on page load
+  window.addEventListener('DOMContentLoaded', () => {
+    app.init();
+  });
+  </script>
+</body>
+</html>
